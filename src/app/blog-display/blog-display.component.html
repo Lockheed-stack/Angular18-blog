@@ -1,0 +1,59 @@
+<div class="blog_container">
+    <div class="blog_info_skeleton">
+        <nz-skeleton [nzActive]="true" [nzLoading]="loading">
+            <div class="blog_info">
+                <h1>Title</h1>
+                <h2>abstract</h2>
+                <div>
+                    <h2>作者</h2>
+                </div>
+            </div>
+        </nz-skeleton>
+    </div>
+    <!-- <div class="divider"></div> -->
+    <hr>
+    <div class="blog_body_skeleton">
+        <nz-skeleton [nzActive]="true" [nzLoading]="loading">
+            <div class="blog_body">
+                <app-blog-markdown (isReady)="markdownReady($event)"></app-blog-markdown>
+            </div>
+        </nz-skeleton>
+    </div>
+
+    <div *ngIf="!loading" class="anchor">
+        <div class="bookmarkBox" cdkDrag cdkDragBoundary=".blog_container">
+            <button mat-fab (click)="onBookMarkClicked()"><mat-icon>bookmark</mat-icon></button>
+        </div>
+    </div>
+</div>
+<nz-drawer [nzVisible]="openSidebar" nzPlacement="right" [nzTitle]="drawertitle" [nzClosable]="false"
+    [nzExtra]="closebtn"
+    (nzOnClose)="closeBookMark()">
+    <ng-container *nzDrawerContent>
+        <ul cdkListbox class="example-listbox">
+            @for (item of titleArray; track item; let idx = $index) {
+                @switch (item.level) {
+                    @case (1) {
+                        <li [cdkOption]="idx" class="example-option" style="font-weight: bold;" (click)="onBookMarkItemClicked(item.TitleId)">{{item.TitleName}}</li>
+                    }
+                    @case (2) {
+                        <li [cdkOption]="idx" class="example-option" style="margin-left: 20px;" (click)="onBookMarkItemClicked(item.TitleId)">{{item.TitleName}}</li>
+                    }
+                    @case (3) {
+                        <li [cdkOption]="idx" class="example-option" style="margin-left: 35px;" (click)="onBookMarkItemClicked(item.TitleId)">{{item.TitleName}}</li>
+                    }
+                }
+            }
+        </ul>
+    </ng-container>
+</nz-drawer>
+<ng-template #drawertitle>
+    <h3>
+        目录
+    </h3>
+</ng-template>
+<ng-template #closebtn>
+    <button mat-icon-button (click)="closeBookMark()">
+        <mat-icon>close</mat-icon>
+    </button>
+</ng-template>

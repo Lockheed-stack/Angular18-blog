@@ -1,1 +1,40 @@
-/* You can add global styles to this file, and also import other style files */
+@use "@angular/material" as mat;
+@use "styles/theme_6DAE3D" as m3-theme;
+// @use "./app/nav/layout.component.theme" as layout-theme;
+@include mat.core();
+
+:root{
+    @include mat.all-component-themes(m3-theme.$light-theme);
+    @include mat.color-variants-backwards-compatibility(m3-theme.$light-theme);
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+body.darkMode{
+    @include mat.all-component-colors(m3-theme.$dark-theme);
+    @include mat.color-variants-backwards-compatibility(m3-theme.$dark-theme);
+}
+
+// customer style
+.markdown-body img{
+    max-width: 100%;
+}
+.ant-drawer-wrapper-body{
+    background:var(--mat-app-background-color);
+    color: var(--mat-app-text-color);
+    .ant-drawer-title{
+        color: var(--mat-app-text-color);
+    }
+}
+.mat-mdc-dialog-surface{
+    background: linear-gradient(45deg, #FAB2FF 10%, #1904E5 100%);
+    background-size: cover;
+	background-repeat: no-repeat;
+
+}
+/* Importing Bootstrap SCSS file. */
+@import 'bootstrap/scss/bootstrap';

@@ -1,0 +1,78 @@
+@mixin visable_width {
+    min-width: 200px;
+    max-width: 980px;
+}
+
+.blog_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .blog_info_skeleton {
+        @include visable_width;
+        width: 100%;
+        margin-top: 20px;
+
+        .blog_info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+
+
+    hr {
+        border: none;
+        width: 90%;
+        @include visable_width;
+        height: 20px;
+        border-bottom: 3px solid var(--mat-sidenav-content-text-color);
+        box-shadow: 0 10px 10px -5px var(--mdc-filled-button-container-color);
+    }
+
+    .blog_body_skeleton {
+        width: 100%;
+        @include visable_width;
+
+        .blog_body {
+            box-sizing: border-box;
+            @include visable_width;
+            padding: 45px;
+        }
+    }
+
+    .anchor {
+        position: fixed;
+        top: 40%;
+        right: 3%;
+        bottom: 30%;
+        z-index: 10;
+    }
+
+    .bookmarkBox {
+        width: fit-content;
+        height: fit-content;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+}
+
+
+.example-listbox {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.example-option {
+    cursor: pointer;
+
+    &:focus {
+        background: rgba(237, 19, 19, 0.2);
+        cursor: pointer;
+    }
+}

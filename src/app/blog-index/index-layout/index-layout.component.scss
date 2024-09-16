@@ -1,0 +1,82 @@
+.layout {
+    margin: 1em 3em 2em;
+
+    .category {
+        margin-bottom: 1.5em;
+
+        .container {
+            display: flex;
+
+            button {
+                width: 100%;
+                font-weight:550;
+            }
+        }
+    }
+
+    .blog-abstract {
+        #carousel-slide button {
+            display: flex;
+            position: absolute;
+            z-index: 5;
+        }
+
+        mat-progress-bar {
+            bottom: 2%;
+            display: flex;
+            position: absolute;
+            z-index: 5;
+            width: 50%;
+        }
+
+        mat-grid-tile {
+            border-radius: 1em;
+        }
+
+        .example-card {
+            width: 95%;
+            height: 95%;
+
+            p {
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            &:hover {
+                cursor: pointer;
+                box-shadow: 0 0 20px 6px #890f97bc;
+                transition: box-shadow 0.5s;
+            }
+        }
+
+
+        button#refresh {
+            position: absolute;
+            right: 0;
+            height: fit-content;
+            width: fit-content;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 1.5em;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            font-weight: bold;
+
+            mat-icon {
+                margin: 0 0 5px 0;
+                transform: rotate(0deg) scale(1.5);
+                transition: 0.5s;
+            }
+
+            &:active mat-icon {
+                transform: rotate(360deg) scale(2);
+                transition: 0s;
+            }
+        }
+
+    }
+}

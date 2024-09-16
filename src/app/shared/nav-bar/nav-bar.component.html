@@ -1,0 +1,28 @@
+<mat-toolbar class="toolbar">
+    <span>My App</span>
+    <span class="example-spacer"></span>
+
+
+    @if (avatarURL!=='') {
+    <button mat-icon-button>
+        <img mat-card-avatar [src]="avatarURL" alt="">
+    </button>
+    }@else {
+    <button mat-icon-button (click)="openLoginDialog()">
+        <mat-icon>person</mat-icon>
+    </button>
+    }
+
+
+    <button mat-icon-button>
+        <a routerLink="/">
+            <mat-icon>home</mat-icon>
+        </a>
+    </button>
+    <button mat-icon-button>
+        <mat-icon>share</mat-icon>
+    </button>
+    <button mat-icon-button (click)="toggleTheme()" color="warn">
+        <mat-icon> {{theme}} </mat-icon>
+    </button>
+</mat-toolbar>

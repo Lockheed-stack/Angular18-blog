@@ -1,0 +1,55 @@
+<mat-dialog-content>
+    <div class="container">
+        <div class="overlay-left">
+            <h1>Hello World.</h1>
+        </div>
+
+        <div class="loginForm-right">
+            <h1>密码登录</h1>
+            <form [formGroup]="signinForm" (ngSubmit)="onSubmit()">
+                <mat-form-field appearance="fill">
+                    <mat-label>用户名</mat-label>
+                    <input matInput placeholder="请输入账号" formControlName="username">
+
+                    @if (signinForm.get('username').invalid && signinForm.get('username').errors['required']) {
+                    <mat-error>username required!</mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                    <mat-label>密码</mat-label>
+                    <input matInput placeholder="请输入密码" formControlName="password"
+                        [type]="hidePassword?'password':'text'">
+                    <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+                        <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                    </button>
+                    @if (signinForm.get('password').invalid&& signinForm.get('password').errors['required']) {
+                    <mat-error>password required!</mat-error>
+                    }
+                </mat-form-field>
+                
+                <mat-checkbox><span class="text-checkbox">记住我</span></mat-checkbox>
+                <div class="onLogin">
+                    <button mat-raised-button type="submit" [disabled]="loginBtnDisable">登录</button>
+                    @if (loginBtnDisable && authUserResult===2) {
+                        <mat-spinner></mat-spinner>
+                    }
+                    @switch (authUserResult) {
+                        @case (0) {
+                            <mat-icon>check</mat-icon>
+                        }
+                        @case (1) {
+                            <mat-icon>close</mat-icon>
+                        }
+                        @case (2) {
+                            <mat-icon>question_mark</mat-icon>
+                        }
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button id="closeDialogBtn" mat-raised-button mat-dialog-close cdkFocusInitial [disabled]="loginBtnDisable">关闭</button>
+</mat-dialog-actions>

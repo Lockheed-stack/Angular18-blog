@@ -1,0 +1,18 @@
+.toolbar{
+    opacity: 0.75;
+    position: fixed;
+    z-index: 10;
+
+    .example-spacer {
+        flex: 1 1 auto;
+    }
+    .avatar-container{
+        display: flex;
+        height: 100%;
+        align-items: center;
+        img{
+            background-size: cover; 
+            height: 70%;
+        }
+    }
+}

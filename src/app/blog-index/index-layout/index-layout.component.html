@@ -1,0 +1,57 @@
+
+<div class="layout">
+    <div class="category">
+        <mat-grid-list cols="7" rowHeight="50px" gutterSize="5px" id="category-grid">
+            <mat-grid-tile colspan="1" rowspan="1"
+                *ngFor="let name of categoryName">
+                <div class="container">
+                    <button mat-flat-button (click)="onCategoryClicked(1)"> {{name}} </button>
+                </div>
+            </mat-grid-tile>
+        </mat-grid-list>
+    </div>
+
+    <div class="blog-abstract">
+        <mat-grid-list cols="9" rowHeight="200px" gutterSize="15px" id="grid-list">
+            <mat-grid-tile colspan="3" rowspan="2" id="carousel-slide">
+
+                <button mat-icon-button style="left: 0;" (click)="onCarouselLeftClicked()">
+                    <mat-icon fontIcon="arrow_back_ios_new"></mat-icon>
+                </button>
+                <button mat-icon-button style="right: 0;" (click)="onCarouselRightClicked()">
+                    <mat-icon fontIcon="arrow_forward_ios"></mat-icon>
+                </button>
+
+                <app-index-carousel [carouselWidth]="setCarouselWidth" [direction]="orientaion"
+                    (indexUpdated)="onCarouselProgressBarUpdated($event)"></app-index-carousel>
+                <mat-progress-bar mode="determinate" value="{{progressBarVal}}"></mat-progress-bar>
+            </mat-grid-tile>
+
+            @for (item of articlesArray; track item.ID) {
+            <mat-grid-tile [colspan]="2" [rowspan]="1">
+                <mat-card class="example-card" appearance="outlined" (click)="onCardClicked(item.ID)">
+                    <mat-card-header>
+                        <mat-card-title-group>
+                            <mat-card-title>{{item.Title}}</mat-card-title>
+                            <mat-card-subtitle>{{item.CreateAt}}</mat-card-subtitle>
+                            <img mat-card-sm-image
+                                src="https://material.angular.io/assets/img/examples/shiba2.jpg">
+                        </mat-card-title-group>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <p>
+                            {{item.Desc}}
+                        </p>
+                    </mat-card-content>
+                </mat-card>
+                <mat-grid-tile-footer>阅读量:{{item.PageView}}</mat-grid-tile-footer>
+            </mat-grid-tile>
+            }
+        </mat-grid-list>
+        <button mat-stroked-button id="refresh" [style.top]="refreshBtnTop" (click)="onRefreshBtnClicked()">
+            <mat-icon>restart_alt</mat-icon>
+            试试手气
+        </button>
+    </div>
+</div>
+<app-infinite-carousel></app-infinite-carousel>

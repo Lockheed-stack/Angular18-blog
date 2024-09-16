@@ -1,0 +1,24 @@
+.categoryName{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    h2{
+        display: flex;
+    }
+}
+mat-grid-list{
+    margin: 20px 20px auto;
+}
+mat-grid-tile {
+    border-radius: 1em;
+}
+mat-card{
+    height: 95%;
+    width: 95%;
+    &:hover {
+        cursor: pointer;
+        box-shadow: 0 0 20px 6px #890f97bc;
+        transition: box-shadow 0.5s;
+    }
+}

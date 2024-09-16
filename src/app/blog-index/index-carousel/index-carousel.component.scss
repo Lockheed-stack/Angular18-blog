@@ -1,0 +1,39 @@
+.slider {
+    .slide-track {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: space-around;
+        min-width: 100%;
+    }
+
+    .card-container {
+        margin: 2em;
+        height: 410px;
+
+        :hover {
+            cursor: pointer;
+        }
+
+        mat-card {
+            height: 100%;
+        }
+
+        .header-image {
+            background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+            background-size: cover;
+        }
+
+        img {
+            max-height: 40%;
+            object-fit: scale-down;
+        }
+
+        p {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 5;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+}

@@ -1,0 +1,26 @@
+<div class="categoryName">
+    <h2>类别名</h2>
+</div>
+<mat-grid-list cols="5" rowHeight="200px" gutterSize="10px">
+    @for (item of blogs; track (item.ID);) {
+        <mat-grid-tile colspan="1" rowspan="1">
+            <mat-card (click)="onCardClicked(item.ID)">
+                <mat-card-header>
+                    <mat-card-title-group>
+                      <mat-card-title>{{item.Title}}</mat-card-title>
+                      <mat-card-subtitle>{{item.CreateAt}}</mat-card-subtitle>
+                      <img mat-card-sm-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" >
+                    </mat-card-title-group>
+                  </mat-card-header>
+                  <mat-card-content>
+                    {{item.Desc}}
+                  </mat-card-content>
+            </mat-card>
+        </mat-grid-tile>
+    }
+</mat-grid-list>
+<mat-paginator [length]="length"
+              [pageSize]="pageSize"
+              [pageSizeOptions]="[5, 10, 25]"
+              (page)="handlePageEvent($event)">
+</mat-paginator>
