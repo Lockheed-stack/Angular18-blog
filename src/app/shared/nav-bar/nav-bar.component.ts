@@ -1,11 +1,15 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatMenuModule } from '@angular/material/menu';
 import { NgIf } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { LoginComponent } from '../login/login.component';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { Subscription } from 'rxjs';
+import { DarkLightService } from '../../services/dark-light.service';
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
@@ -15,36 +19,60 @@ import { LoginComponent } from '../login/login.component';
     MatToolbarModule,
     NgIf,
     RouterLink,
-    LoginComponent
+    LoginComponent,
+    MatMenuModule
   ],
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.scss',
 })
-export class NavBarComponent implements OnInit {
-
+export class NavBarComponent implements OnInit, OnDestroy {
+  constructor(
+    private router: Router,
+    private dark_light_srv: DarkLightService,
+  ) { }
   readonly dialog = inject(MatDialog);
   dialogCfg: MatDialogConfig = new MatDialogConfig();
-  dialogRef: MatDialogRef<LoginComponent>;
+  loginDialogRef: MatDialogRef<LoginComponent>;
+  logoutDialogRef: MatDialogRef<ConfirmDialogComponent>;
+  subscription: Subscription = new Subscription();
   theme = "light_mode";
-  avatarURL: string = "";
+  avatarURL: string = "https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png";;
 
 
   toggleTheme() {
-    if (this.theme === "dark_mode") {
-      document.body.classList.remove("darkMode");
-      this.theme = "light_mode";
-    } else {
+    const result = this.dark_light_srv.toggle_theme();
+    if (result){
       this.theme = "dark_mode";
-      document.body.classList.add("darkMode");
+    }else{
+      this.theme = "light_mode";
     }
   }
   openLoginDialog() {
-    this.dialogRef = this.dialog.open(LoginComponent, this.dialogCfg);
-    this.dialogRef.afterClosed().subscribe(() => {
-      if (this.dialogRef.componentInstance.authUserResult === 0) {
-        this.avatarURL = "https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png";
+    this.loginDialogRef = this.dialog.open(LoginComponent, this.dialogCfg);
+    this.loginDialogRef.addPanelClass("dialog-class-login");
+    this.subscription.add(
+      this.loginDialogRef.afterClosed().subscribe(() => {
+        if (this.loginDialogRef.componentInstance.authUserResult === 0) {
+          this.avatarURL = "https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png";
+        }
+      })
+    )
+  }
+  onManageBtnClicked() {
+    this.router.navigate(['management']);
+  }
+  onLogoutBtnClicked() {
+    this.logoutDialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: "退出登录?",
+        content: "是否退出登录"
       }
     })
+    this.subscription.add(
+      this.logoutDialogRef.afterClosed().subscribe(() => {
+        if (this.logoutDialogRef.componentInstance.is_yes) { this.avatarURL = ""; }
+      })
+    )
   }
   ngOnInit(): void {
     this.dialogCfg = {
@@ -54,5 +82,11 @@ export class NavBarComponent implements OnInit {
       width: "980px",
       maxWidth: "980px",
     }
+    if(this.dark_light_srv.get_theme()){
+      this.theme = "dark_mode";
+    }
+  }
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }

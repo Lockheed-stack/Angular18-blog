@@ -1,9 +1,10 @@
 @use "@angular/material" as mat;
 @use "styles/theme_6DAE3D" as m3-theme;
+@use "styles/ceylon" as markdown;
 // @use "./app/nav/layout.component.theme" as layout-theme;
 @include mat.core();
 
-:root{
+:root {
     @include mat.all-component-themes(m3-theme.$light-theme);
     @include mat.color-variants-backwards-compatibility(m3-theme.$light-theme);
 }
@@ -14,27 +15,43 @@ body {
     margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
-body.darkMode{
+
+body.darkMode {
     @include mat.all-component-colors(m3-theme.$dark-theme);
     @include mat.color-variants-backwards-compatibility(m3-theme.$dark-theme);
 }
 
 // customer style
-.markdown-body img{
-    max-width: 100%;
+.markdown-body {
+
+    img {
+        max-width: 100%;
+        border-radius: 0.5em;
+    }
+    @include markdown.ceylon;
+    
 }
-.ant-drawer-wrapper-body{
-    background:var(--mat-app-background-color);
+
+.ant-drawer-wrapper-body {
+    background: var(--mat-app-background-color);
     color: var(--mat-app-text-color);
-    .ant-drawer-title{
+
+    .ant-drawer-title {
         color: var(--mat-app-text-color);
     }
 }
-.mat-mdc-dialog-surface{
-    background: linear-gradient(45deg, #FAB2FF 10%, #1904E5 100%);
-    background-size: cover;
-	background-repeat: no-repeat;
 
+.dialog-class-login {
+    .mat-mdc-dialog-surface {
+        background: linear-gradient(45deg, #FAB2FF 10%, #1904E5 100%);
+        background-size: cover;
+        background-repeat: no-repeat;
+
+    }
 }
+mat-tooltip-component{
+    white-space: pre-line;
+}
+
 /* Importing Bootstrap SCSS file. */
-@import 'bootstrap/scss/bootstrap';
+// @import 'bootstrap/scss/bootstrap';

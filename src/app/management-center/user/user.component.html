@@ -1,0 +1,93 @@
+<div class="wrapper">
+    <div class="profile-card">
+        <div class="profile-card__img">
+            <img [src]="userInfo.avatar" alt="profile card">
+        </div>
+
+        <div class="profile-card__cnt">
+            <div class="profile-card__txt"><strong>UID: </strong>{{userInfo.UID}}</div>
+            <div class="profile-card__txt"><strong>{{userInfo.nickname}}</strong></div>
+            <div class="profile-card__txt">{{userInfo.desc}}</div>
+            <div class="profile-card-loc">
+                <mat-icon>location_on</mat-icon>
+                <span class="profile-card-loc__txt">
+                    {{userInfo.location}}
+                </span>
+            </div>
+            <div class="profile-card-loc">
+                <mat-icon>mail</mat-icon>
+                <span class="profile-card-loc__txt">
+                    {{userInfo.email}}
+                </span>
+            </div>
+            <div class="profile-card-loc">
+                <mat-icon> <ng-icon name="bootstrapGithub"></ng-icon> </mat-icon>
+                <span class="profile-card-loc__txt">
+                    <a target="_blank" [href]="userInfo.github">{{userInfo.github}}</a>
+                </span>
+            </div>
+        </div>
+        <div class="profile-card__btn">
+            <button mat-fab extended (click)="onEditBtnClicked()">
+                <mat-icon>edit_square</mat-icon>
+                编辑
+            </button>
+        </div>
+    </div>
+
+    @if (editMode) {
+    <div class="profile-edit">
+        <form [formGroup]="updatingForm" (ngSubmit)="submitUpdatedUserInfo()">
+            <mat-list>
+                @for (item of EditableFields; track item) {
+                <mat-list-item [lines]="item.lines">
+                    @switch (item.formControlName) {
+                    @case ("github") {
+                    <mat-icon matListItemIcon><ng-icon [name]="item.icon"></ng-icon></mat-icon>
+                    }
+                    @default {
+                    <mat-icon matListItemIcon>{{item.icon}}</mat-icon>
+                    }
+                    }
+                    @if (item.formControlName === 'avatar') {
+                        <div style="display: inline-flex;">
+                            <app-upload-img [label]="item.label"
+                            [maxImgSize]="150"
+                            (imgReady)="onInputChanged(item.formControlName,$event)"
+                            ></app-upload-img>
+                        </div>
+                    }@else {
+                    <mat-form-field>
+                        <mat-label>{{item.label}}</mat-label>
+                        @if (item.formControlName === 'desc') {
+                        <textarea matInput [formControlName]="item.formControlName"
+                            (input)="onInputChanged(item.formControlName,$event)"></textarea>
+                        }@else {
+                            <input matInput [formControlName]="item.formControlName"
+                            (input)="onInputChanged(item.formControlName,$event)">
+                        }
+                        @if (updatingForm.get(item.formControlName).invalid && updatingForm.get(item.formControlName).touched) {
+                            <mat-error>{{onInputInvalid(item.formControlName)}}</mat-error>
+                        }
+                        @if (item.formControlName === 'desc') {
+                            <mat-hint>字数{{userInfo.desc.length}}/150</mat-hint>
+                        }
+                    </mat-form-field>
+                    }
+                </mat-list-item>
+                }
+            </mat-list>
+            <div class="form_btn">
+                <button mat-fab extended type="button" [disabled]="submitBtnDisabled" (click)="onEditBtnClicked()">
+                    <mat-icon>cancel</mat-icon>
+                    取消
+                </button>
+                <button mat-fab extended type="submit" [disabled]="submitBtnDisabled">
+                    <mat-icon>update</mat-icon>
+                    提交
+                </button>
+            </div>
+        </form>
+    </div>
+    }
+</div>

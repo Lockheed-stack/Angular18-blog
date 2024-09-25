@@ -1,0 +1,29 @@
+.input-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px dashed var(--mat-app-text-color);
+    color: var(--mat-app-text-color);
+    cursor: pointer;
+
+    &:hover{
+        border:3px solid var(--mat-app-text-color);
+    }
+    .title {
+        color: var(--mat-app-text-color);
+        font-size: 20px;
+        font-weight: bold;
+        text-align: center;
+        transition: color .2s ease-in-out;
+    }
+    .input-file{
+        opacity: 0;
+        z-index: -1;
+        position: absolute;
+    }
+}
+

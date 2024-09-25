@@ -8,6 +8,9 @@ export const routes: Routes = [
     {path:"",component:BlogIndexComponent,children:[
         {path:"",component:IndexLayoutComponent},
         {path:"blog/:blogid",component:BlogDisplayComponent},
-        {path:"category/:cid",component:IndexCategoryComponent}
+        {path:"category/:cid",component:IndexCategoryComponent},
     ]},
+    { path: "management", loadChildren: () => 
+        import("./management-center/management-center-routing.module").then(m=>m.ManagementCenterRoutingModule)
+    }
 ];

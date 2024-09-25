@@ -1,0 +1,26 @@
+.accordion{
+    mat-panel-title{
+        font-weight: bold;
+    }
+    mat-grid-tile{
+        border-radius: 1em;
+    }
+    .stat-text{
+        mat-card{
+            width: 60%;
+            height: 90%;
+            box-shadow: 0 0 6px 3px #336b00;
+        }
+    }
+    .stat-chart{
+        mat-card{
+            width: 95%;
+            height: 95%;
+            box-shadow: 0 0 6px 3px #890f97bc;
+            mat-card-content{
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+}

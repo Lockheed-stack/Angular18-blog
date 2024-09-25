@@ -1,0 +1,58 @@
+<mat-accordion multi="true" class="accordion">
+    <mat-expansion-panel expanded="true">
+        <mat-expansion-panel-header>
+            <mat-panel-title> 总览 </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="stat-text">
+            <mat-grid-list [cols]="stat_total_cols" rowHeight="100px" gutterSize="10px">
+                @for (item of stat_total; track item) {
+                <mat-grid-tile [colspan]="item.cols" [rowspan]="item.rows">
+                    <mat-card>
+                        <mat-card-content>
+                            <nz-statistic [nzValue]="item.value" [nzTitle]="item.text"></nz-statistic>
+                        </mat-card-content>
+                    </mat-card>
+                </mat-grid-tile>
+                }
+            </mat-grid-list>
+        </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel expanded="true">
+        <mat-expansion-panel-header>
+            <mat-panel-title>今日</mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="stat-text">
+            <mat-grid-list [cols]="stat_total_cols" rowHeight="100px" gutterSize="10px">
+                @for (item of stat_today; track item) {
+                <mat-grid-tile [colspan]="item.cols" [rowspan]="item.rows">
+                    <mat-card>
+                        <mat-card-content>
+                            <nz-statistic [nzValue]="item.value" [nzTitle]="item.text"></nz-statistic>
+                        </mat-card-content>
+                    </mat-card>
+                </mat-grid-tile>
+                }
+            </mat-grid-list>
+        </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel expanded="true">
+        <mat-expansion-panel-header>
+            <mat-panel-title>近七日数据</mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="stat-chart">
+            <mat-grid-list [cols]="4" rowHeight="200px" gutterSize="10px">
+                @for (item of stat_chart; track item) {
+                <mat-grid-tile [colspan]="item.cols" [rowspan]="item.rows">
+                    <mat-card>
+                        <mat-card-content>
+                            <p-chart height="90%" type="line" [data]="item" [options]="options" />
+                        </mat-card-content>
+                    </mat-card>
+                </mat-grid-tile>
+                }
+            </mat-grid-list>
+        </div>
+    </mat-expansion-panel>
+</mat-accordion>

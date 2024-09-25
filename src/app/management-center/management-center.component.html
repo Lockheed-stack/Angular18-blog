@@ -1,0 +1,43 @@
+<mat-sidenav-container class="sidenav-container" [hasBackdrop]="false">
+    <mat-sidenav #drawer class="sidenav" fixedInViewport mode="side" [opened]="true">
+        <mat-toolbar>菜单</mat-toolbar>
+        <mat-selection-list multiple="false">
+            @for (item of sideNavList; track item.router_navgate) {
+            @if (sideNavExpandCtr.get(item.belongTo)) {
+            <mat-list-option (click)="onNavBtnClick(item.router_navgate)" [selected]="item.isSelected"
+                [value]="item.router_navgate">
+                <div class="list-option-lv{{item.level}}">
+                    <mat-icon>{{item.icon}}</mat-icon>
+                    <span style="margin-left: 5px;">{{item.content}}</span>
+                    @if (item.extend) {
+                    <button mat-icon-button>
+                        <mat-icon>{{sideNavExpandCtr.get(item.router_navgate)?'expand_more':'chevron_right'}}</mat-icon>
+                    </button>
+                    }
+                </div>
+            </mat-list-option>
+            }
+            }
+        </mat-selection-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <mat-toolbar>
+            <button type="button" mat-icon-button (click)="drawer.toggle()">
+                <mat-icon>menu</mat-icon>
+            </button>
+            <span>Angular18-Blog</span>
+            <span style="flex: 1 1 auto;"></span>
+            <button mat-icon-button (click)="toggleTheme()" color="warn">
+                <mat-icon> {{theme}} </mat-icon>
+            </button>
+            <button mat-icon-button (click)="onIndexBtnClick()">
+                <mat-icon>home</mat-icon>
+            </button>
+            <button mat-icon-button (click)="onLogoutBtnClicked()">
+                <mat-icon>logout</mat-icon>
+            </button>
+        </mat-toolbar>
+        <!-- Add Content Here -->
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,9 +1,12 @@
 export interface Article {
-    ID: number,
-    CreateAt: string,
-    UpdateAt: string,
+    ID?: number,
+    CID?:number,
+    UID?:number,
+    CreateAt?: string,
+    UpdateAt?: string,
     Title: string,
     Desc: string,
     Content: string,
-    PageView: number
+    Cover?:string,
+    PageView?: number
 }

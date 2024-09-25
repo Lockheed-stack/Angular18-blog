@@ -1,0 +1,11 @@
+<label for="images" class="input-container">
+    <span class="title">{{label}}</span>
+    <span>支持 png/jpg/jpeg 格式</span>
+    @if (maxImgSize > 0) {
+        <span>大小不超过 {{maxImgSize}}kb</span>
+    }
+    <input type="file" id="images" 
+    accept="image/png,image/jpg,image/jpeg"
+    class="input-file"
+    (input)="onInputChanged($event)">
+</label>

@@ -1,0 +1,124 @@
+<mat-stepper linear #stepper (selectedIndexChange)="onInputChanged('stepper',$event)" class="wrapper">
+    <mat-step>
+        <ng-template matStepLabel>基本信息</ng-template>
+        <div class="edit">
+            <form [formGroup]="updatingForm">
+                <mat-list>
+                    @for (item of EditableFields; track item) {
+                    <mat-list-item [lines]="item.lines">
+                        <mat-icon matListItemIcon>{{item.icon}}</mat-icon>
+                        <div matListItemTitle>{{item.label}}</div>
+
+                        @if (item.formControlName === 'cover') {
+                        <div style="display: inline-flex;">
+                            <app-upload-img [label]="item.label" [maxImgSize]="150"
+                                (imgReady)="onInputChanged(item.formControlName,$event)"></app-upload-img>
+                            @if (blogInfo.Cover!==undefined) {
+                            <img [src]="blogInfo.Cover" alt=""
+                                style="margin-left: 20px; max-width: 100px; max-height: 100px;">
+                            }@else {
+                            <img style="margin-left: 20px; max-width: 100px; max-height: 100px;"
+                                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAAXNSR0IArs4c6QAAA6VJREFUeF7tm21LMmEUhI+VlaWWghqGQer//yV+74vZBy18AU00LRV9mIWVkop6UpyzzAEpSHbHuZz75dxbrFarrUxF40BMQGhYBEIEhIuHgJDxEBABYXOATI/mEAEhc4BMjhIiIGQOkMlRQgSEzAEyOUqIgJA5QCZHCREQMgfI5CghAkLmAJkcJURAyBwgk6OECAiZA2RylBABIXOATI4SIiBkDpDJUUIEhMwBMjlKiID83YHT01PLZrOWTCbt5OTEDg8PbbVa2dvbm00mExsMBjYajf5+oz1cwVVCLi4u7Orqys7Pzy0Wi31r13g8tlarZS8vL3uw9f9v6QZIOp2229tbOzo6+vGnnc/n1mw2g8R4KTdAkA4AwfCEWi6X9vr6atPpNPj97OzMEomEHRwcfPAef6/X6zabzVwwcQcEc0Wv17Nut2uLxeKDycfHx1YqlQzwwiEN7398fLROpyMg23QAJufz+cBcTNxfFRJSrVYtlUqt3/L8/Gz39/fblLOza7lJCIzGazMVnzmDib9YLK5TAoB3d3c7M3GbF3YD5DcfGkm6vr5ezycC8hv3dvDezYRgldVoNHZwp+1fMnIJwbBWqVQMy2SUJvXtf2l+dcVCoRDMH+HyF0tjTOj46aEilZBMJmM3NzfrzSP2J09PT26WvPjCRAbI5eVlACMej6+HKuxXsFP3VJEAgmRgQ7gJA3sWpMRTuQcSJRjuhyx0fdHfQgs+XFF5HKbeJ9h1QsrlsiEhYaFF8vDw4G6YigQQ9KqQjnDe8NbV/Wpec5uQzfYIurk4kPJeboGgV4UWCQorKayo0JL3Xm6BvE8I2iPtdjvYBHovt0DwkAM2guEJoqczj+++NG6B4MkT9KxwSojCES2GLTx54rncAvFseiQTIiBRdYDsc7kesjCP5HK5oHXS7/eDl/dyCwQw0DrBs1hhHwv7EO+bQ7dAcDKIzeH7R0qj0D5xC2SzdYKUCMgeB2zsP9BcxBPwYfvE23HtZ/a5TQg+DB68xtEt5pPhcOj2XxAi0X7fYzh3emvXCdmpM3u6uIDsyfivbisgAkLmAJkcJURAyBwgk6OECAiZA2RylBABIXOATI4SIiBkDpDJUUIEhMwBMjlKiICQOUAmRwkREDIHyOQoIQJC5gCZHCVEQMgcIJOjhAgImQNkcpQQASFzgEyOEiIgZA6QyVFCBITMATI5SoiAkDlAJkcJERAyB8jkKCECQuYAmRwlREDIHCCT8w9W7m0vbzV05gAAAABJRU5ErkJggg=="
+                                alt="">
+                            }
+                        </div>
+                        }@else {
+                        <mat-form-field>
+                            <!-- <mat-label>{{item.label}}</mat-label> -->
+                            @switch (item.formControlName) {
+                            @case ('desc') {
+                            <textarea matInput [formControlName]="item.formControlName" cdkTextareaAutosize
+                                cdkAutosizeMinRows="2" (input)="onInputChanged(item.formControlName,$event)"></textarea>
+                            }
+                            @case ('category') {
+                            <mat-select [formControlName]="item.formControlName"
+                                (selectionChange)="onInputChanged(item.formControlName,$event)">
+                                @for (item of categoryName; track item) {
+                                <mat-option [value]="item">{{item}}</mat-option>
+                                }
+                            </mat-select>
+                            }
+                            @default {
+
+                            <input matInput [formControlName]="item.formControlName"
+                                (input)="onInputChanged(item.formControlName,$event)">
+
+                            }
+                            }
+                            @if (updatingForm.get(item.formControlName).invalid &&
+                            updatingForm.get(item.formControlName).touched) {
+                            <mat-error>{{onInputInvalid(item.formControlName)}}</mat-error>
+                            }
+                            @if (item.formControlName === 'desc') {
+                            <mat-hint>字数{{blogInfo.Desc.length}}/150</mat-hint>
+                            }
+                        </mat-form-field>
+                        }
+                    </mat-list-item>
+                    }
+                </mat-list>
+            </form>
+        </div>
+        <div>
+            <button mat-button matStepperPrevious>上一步</button>
+            <button mat-button matStepperNext>下一步</button>
+        </div>
+    </mat-step>
+    <mat-step>
+        <ng-template matStepLabel>编辑方式</ng-template>
+
+        <div class="mode">
+            <mat-radio-group>
+                <mat-radio-button value="1" checked="true" (change)="onInputChanged('url',$event)">
+                    <span> 输入新 Markdown URL </span>
+                </mat-radio-button>
+                <mat-radio-button value="2" (change)="onInputChanged('origin',$event)">
+                    <div style="display: flex;align-items: center;">
+                        <span> 编辑原有 Markdown </span>
+                        <mat-icon [matTooltip]="tooltips" matTooltipHideDelay="3000">help</mat-icon>
+                    </div>
+                </mat-radio-button>
+            </mat-radio-group>
+            <div>
+                <button mat-button matStepperPrevious>上一步</button>
+                <button mat-button matStepperNext>下一步</button>
+            </div>
+        </div>
+    </mat-step>
+    <mat-step>
+        <ng-template matStepLabel>修改</ng-template>
+        <div class="edit_blog">
+            @if (EditMode === 1) {
+            <form>
+                <mat-form-field>
+                    <mat-icon matPrefix>link</mat-icon>
+                    <mat-label>输入 Markdown URL</mat-label>
+                    <input matInput type="url">
+                </mat-form-field>
+            </form>
+            }@else {
+            <div style="display: flex;justify-content: space-around;width: 100%;align-items: center;">
+                <h3>
+                    <mat-icon [matTooltip]="tooltips" matTooltipHideDelay="3000">help</mat-icon>
+                    写点什么吧...
+                </h3>
+                <h3>Markdown 预览</h3>
+            </div>
+            <div class="rewrite">
+                <div class="write">
+                    <textarea (input)="onInputChanged('write',$event)" [value]="BlogMarkdownData"
+                        id="writeMarkdown"></textarea>
+                </div>
+                <div class="preview">
+                    <app-edit-markdown (loaded)="onMarkdownLoaded($event)" [data]="BlogMarkdownData"
+                        [mode]="schema"></app-edit-markdown>
+                </div>
+            </div>
+            }
+            <div>
+                <button mat-button matStepperPrevious>上一步</button>
+                <button mat-button (click)="onSubmitBtnClick()" [disabled]="disableSubmitBtn">提交</button>
+            </div>
+        </div>
+    </mat-step>
+</mat-stepper>

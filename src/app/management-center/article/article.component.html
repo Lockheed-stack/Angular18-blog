@@ -1,0 +1,50 @@
+<div class="layout">
+    <div class="category">
+        <mat-grid-list cols="5" rowHeight="50px" gutterSize="5px" id="category-grid">
+            @for (name of categoryName; track name;let idx = $index) {
+            <mat-grid-tile colspan="1" rowspan="1">
+                <div class="container" [title]="name">
+                    <button mat-flat-button (click)="onCategoryClicked(idx)"> {{name}} </button>
+                </div>
+            </mat-grid-tile>
+            }
+        </mat-grid-list>
+    </div>
+    <div class="divider">
+        <div class="chosenItem">
+            <div class="word-bg"></div>
+            <div class="word">
+                {{selectedItem}}
+            </div>
+        </div>
+    </div>
+    <mat-grid-list cols="5" rowHeight="200px" gutterSize="10px">
+        @for (item of blogs; track (item.ID);) {
+        <mat-grid-tile colspan="1" rowspan="1">
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title-group>
+                        <mat-card-title>{{item.Title}}</mat-card-title>
+                        <mat-card-subtitle>{{item.CreateAt}}</mat-card-subtitle>
+                        <img mat-card-sm-image src="https://material.angular.io/assets/img/examples/shiba2.jpg">
+                    </mat-card-title-group>
+                </mat-card-header>
+                <mat-card-content>
+                    {{item.Desc}}
+                </mat-card-content>
+                <mat-card-actions>
+                    <button mat-button (click)="onCardClicked(item.ID)">阅读原文</button>
+                    <button mat-button (click)="onEditBtnClicked(item)">编辑</button>
+                    <button mat-button (click)="onDeleteBlogBtnClicked(item.ID,item.Title)" color="warn">
+                        <mat-icon>delete</mat-icon>
+                        删除
+                    </button>
+                  </mat-card-actions>
+            </mat-card>
+        </mat-grid-tile>
+        }
+    </mat-grid-list>
+    <mat-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25]"
+        (page)="handlePageEvent($event)">
+    </mat-paginator>
+</div>
