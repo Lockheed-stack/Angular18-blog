@@ -69,7 +69,7 @@ export class ManagementCenterComponent implements OnInit, OnDestroy {
 
     this.subscription = this.logoutDialogRef.afterClosed().subscribe(() => {
       if (this.logoutDialogRef.componentInstance.is_yes) {
-        console.log("logout");
+        window.sessionStorage.clear();
         this.router.navigate([''], { relativeTo: this.route.root });
       }
     })

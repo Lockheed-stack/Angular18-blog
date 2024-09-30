@@ -13,7 +13,7 @@
     --tw-prose-counters: var(--theme-500);
     --tw-prose-bullets: var(--theme-500);
     /* Custom */
-    --inline-code-font-size: 0.86em;
+    --inline-code-font-size: 1.2em;
     --inline-code-font-color: #876CE0;
 
     /* blockquote */
@@ -417,15 +417,18 @@
     /* basic styles */
     p code {
         color: var(--inline-code-font-color);
-        font-weight: normal;
+        font-weight: bold;
         font-size: var(--inline-code-font-size);
         padding: .2rem .2rem;
         border-radius: 3px;
         background: #f5f7f9 !important;
         display: inline;
-        vertical-align: bottom;
         line-height: inherit;
         -webkit-font-smoothing: initial;
         -moz-osx-font-smoothing: initial;
+    }
+    pre code{
+        font-family: monospace;
+        font-size: 1em;
     }
 }

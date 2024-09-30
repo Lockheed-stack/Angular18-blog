@@ -36,7 +36,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
   logoutDialogRef: MatDialogRef<ConfirmDialogComponent>;
   subscription: Subscription = new Subscription();
   theme = "light_mode";
-  avatarURL: string = "https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png";;
+  avatarURL: string = "";
 
 
   toggleTheme() {

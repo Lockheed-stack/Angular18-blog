@@ -13,8 +13,8 @@
                         <div style="display: inline-flex;">
                             <app-upload-img [label]="item.label" [maxImgSize]="150"
                                 (imgReady)="onInputChanged(item.formControlName,$event)"></app-upload-img>
-                            @if (blogInfo.Cover!==undefined) {
-                            <img [src]="blogInfo.Cover" alt=""
+                            @if (blogInfo.Img!==undefined) {
+                            <img [src]="blogInfo.Img" alt=""
                                 style="margin-left: 20px; max-width: 100px; max-height: 100px;">
                             }@else {
                             <img style="margin-left: 20px; max-width: 100px; max-height: 100px;"

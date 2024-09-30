@@ -1,22 +1,24 @@
 <div class="blog_container">
     <div class="blog_info_skeleton">
         <nz-skeleton [nzActive]="true" [nzLoading]="loading">
-            <div class="blog_info">
-                <h1>Title</h1>
-                <h2>abstract</h2>
-                <div>
-                    <h2>作者</h2>
+            @if (blogInfo!==null) {
+                <div class="blog_info">
+                    <h1>{{blogInfo.Title}}</h1>
+                    <h2>{{blogInfo.Desc}}</h2>
+                    <div>
+                        <h2>{{blogInfo.UID}}</h2>
+                    </div>
                 </div>
-            </div>
+            }
         </nz-skeleton>
     </div>
     <!-- <div class="divider"></div> -->
     <hr>
     <div class="blog_body_skeleton">
         <nz-skeleton [nzActive]="true" [nzLoading]="loading">
-            <div class="blog_body">
-                <app-blog-markdown (isReady)="markdownReady($event)"></app-blog-markdown>
-            </div>
+            @if (markdownURL!=="") {
+            <app-blog-markdown (isReady)="markdownReady($event)" [blogURL]="markdownURL"></app-blog-markdown>
+            }
         </nz-skeleton>
     </div>
 

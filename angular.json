@@ -45,7 +45,7 @@
               "node_modules/ng-zorro-antd/statistic/style/index.min.css",
               "node_modules/ng-zorro-antd/upload/style/index.min.css",
               "node_modules/primeng/resources/primeng.min.css",
-              "node_modules/highlight.js/styles/base16/google-dark.min.css"
+              "node_modules/highlight.js/styles/base16/material.min.css"
             ],
             "scripts": [
               "node_modules/emoji-toolkit/lib/js/joypixels.min.js",

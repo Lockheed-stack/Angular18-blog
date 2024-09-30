@@ -4,6 +4,12 @@
 // @use "./app/nav/layout.component.theme" as layout-theme;
 @include mat.core();
 
+// @font-face {
+//     // font-family: RobotoMono;
+//     // src: url("./styles/fonts/RobotoMono-Regular.ttf");
+//     font-family: Fredoka;
+//     src: url("./styles/fonts/Fredoka-Regular.ttf");
+// }
 :root {
     @include mat.all-component-themes(m3-theme.$light-theme);
     @include mat.color-variants-backwards-compatibility(m3-theme.$light-theme);
@@ -13,7 +19,8 @@ html,
 body {
     height: 100%;
     margin: 0;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
+    // font-family: RobotoMono, "Helvetica Neue", sans-serif;
+    font-family: 'Lato', 'Roboto', "Helvetica Neue", sans-serif;
 }
 
 body.darkMode {
@@ -23,13 +30,19 @@ body.darkMode {
 
 // customer style
 .markdown-body {
-
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    font-size: 16px;
+    line-height: 1.5;
+    word-wrap: break-word;
     img {
         max-width: 100%;
         border-radius: 0.5em;
+        box-sizing: content-box;
     }
+
     @include markdown.ceylon;
-    
+
 }
 
 .ant-drawer-wrapper-body {
@@ -49,7 +62,8 @@ body.darkMode {
 
     }
 }
-mat-tooltip-component{
+
+mat-tooltip-component {
     white-space: pre-line;
 }
 

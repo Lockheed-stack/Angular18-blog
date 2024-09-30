@@ -1,10 +1,10 @@
 <div class="layout">
     <div class="category">
-        <mat-grid-list cols="7" rowHeight="50px" gutterSize="5px" id="category-grid">
-            @for (name of categoryName; track name) {
+        <mat-grid-list [cols]="categoryBreakPoint" rowHeight="50px" gutterSize="5px" id="category-grid">
+            @for (item of categoryInfo; track item.ID) {
             <mat-grid-tile colspan="1" rowspan="1">
-                <div class="container" [title]="name">
-                    <button mat-flat-button (click)="onCategoryClicked(1)"> {{name}} </button>
+                <div class="container" [title]="item.Name">
+                    <button mat-button (click)="onCategoryClicked(item.ID)"> {{item.Name}} </button>
                 </div>
             </mat-grid-tile>
             }
@@ -12,8 +12,8 @@
     </div>
 
     <div class="blog-abstract">
-        <mat-grid-list cols="9" rowHeight="200px" gutterSize="15px" id="grid-list">
-            <mat-grid-tile colspan="3" rowspan="2" id="carousel-slide">
+        <mat-grid-list [cols]="blogAbstractBreakPoint" rowHeight="200px" gutterSize="15px" id="grid-list" >
+            <mat-grid-tile [colspan]="carouselBreakPoint" rowspan="2" id="carousel-slide">
 
                 <button mat-icon-button style="left: 0;" (click)="onCarouselLeftClicked()">
                     <mat-icon fontIcon="arrow_back_ios_new"></mat-icon>
@@ -27,23 +27,15 @@
                 <mat-progress-bar mode="determinate" value="{{progressBarVal}}"></mat-progress-bar>
             </mat-grid-tile>
 
-            @for (item of articlesArray; track item.ID) {
-            <mat-grid-tile [colspan]="2" [rowspan]="1">
+            @for (item of articlesArray; track item.ID; let idx = $index) {
+            <mat-grid-tile [colspan]="2" [rowspan]="1" id="grid-tile-abstract-{{idx}}">
                 <mat-card class="example-card" appearance="outlined" (click)="onCardClicked(item.ID)">
                     <mat-card-header>
-                        <mat-card-title-group>
-                            <mat-card-title>{{item.Title}}</mat-card-title>
-                            <mat-card-subtitle>{{item.CreateAt}}</mat-card-subtitle>
-                            <img mat-card-sm-image src="https://material.angular.io/assets/img/examples/shiba2.jpg">
-                        </mat-card-title-group>
+                            <mat-card-title><span>{{item.Title}}</span></mat-card-title>
                     </mat-card-header>
-                    <mat-card-content>
-                        <p>
-                            {{item.Desc}}
-                        </p>
-                    </mat-card-content>
+                    <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg">
                 </mat-card>
-                <mat-grid-tile-footer>阅读量:{{item.PageView}}</mat-grid-tile-footer>
+                <mat-grid-tile-footer>阅读量:{{item.PageView|number }}</mat-grid-tile-footer>
             </mat-grid-tile>
             }
         </mat-grid-list>

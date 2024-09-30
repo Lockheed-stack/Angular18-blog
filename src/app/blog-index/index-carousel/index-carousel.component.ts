@@ -21,7 +21,7 @@ export class IndexCarouselComponent implements OnInit, OnDestroy, OnChanges {
   @Input() carouselWidth: number = 0;
   @Input() direction: number = 0;
   @Output() indexUpdated = new EventEmitter<{ idx: number, total: number }>;
-  constructor(private router:Router){}
+  constructor(private router: Router) { }
   private autoPlaySubscription: Subscription = Subscription.EMPTY;
   private el_slideTrack: HTMLElement;
 
@@ -93,10 +93,10 @@ export class IndexCarouselComponent implements OnInit, OnDestroy, OnChanges {
     this.autoPlaySubscription.unsubscribe();
   }
   onSlideMouseOut() {
-    this.autoPlaySubscription = interval(5000).subscribe(()=>this.Next_Slide());
+    this.autoPlaySubscription = interval(5000).subscribe(() => this.Next_Slide());
   }
-  onCardClicked(blogID:number){
-    this.router.navigate(["blog",blogID])
+  onCardClicked(blogID: number) {
+    this.router.navigate(["blog", blogID])
   }
 
   // angular lifecycle
@@ -112,7 +112,7 @@ export class IndexCarouselComponent implements OnInit, OnDestroy, OnChanges {
       this.startPos = (this.step) * ((this.slideNum - 1) * 0.5);
     }
     this.el_slideTrack.style.transform = `translateX(${this.startPos}%)`;
-    this.autoPlaySubscription = interval(5000).subscribe(()=>this.Next_Slide());
+    this.autoPlaySubscription = interval(5000).subscribe(() => this.Next_Slide());
     this.indexUpdated.emit({ idx: this.slideIndex, total: this.slideNum });
 
 
@@ -130,7 +130,7 @@ export class IndexCarouselComponent implements OnInit, OnDestroy, OnChanges {
   }
   ngOnChanges(changes: SimpleChanges): void {
     const val = changes["direction"];
-    if (!val.firstChange) {
+    if (val !== undefined && !val.firstChange) {
       if (val.currentValue > val.previousValue) { // turn right
         this.Next_Slide()
       } else { // turn left

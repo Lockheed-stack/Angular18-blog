@@ -1,5 +1,8 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MarkdownModule, MarkdownService } from 'ngx-markdown';
+import { ArticlesService } from '../../services/articles.service';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Subject, takeUntil } from 'rxjs';
 // import hljs from 'highlight.js/lib/common';
 // import hljs_dockerfile from 'highlight.js/lib/languages/dockerfile'
 
@@ -21,13 +24,19 @@ export interface Title {
   templateUrl: './blog-markdown.component.html',
   styleUrl: './blog-markdown.component.scss'
 })
-export class BlogMarkdownComponent implements OnInit{
+export class BlogMarkdownComponent implements OnInit, OnDestroy {
   constructor(
-    private markdownService:MarkdownService,
-  ){ }
-  @Output() isReady:EventEmitter<{ready:boolean,titles:Array<Title>}> = new EventEmitter<{ready:boolean,titles:Array<Title>}>;
+    private markdownService: MarkdownService,
+    private articleService: ArticlesService,
+    private breakpointServer: BreakpointObserver
+  ) { }
+  @Output() isReady: EventEmitter<{ ready: boolean, titles: Array<Title> }> = new EventEmitter<{ ready: boolean, titles: Array<Title> }>;
+  @Input() blogURL: string = "";
   titleArray: Array<Title> = [];
   titleNum: number = 0;
+  markdownData: string = "";
+  markdown_width:string = "980px";
+  destroyed = new Subject<void>();
 
   renderHeading() {
     this.markdownService.renderer.heading = (text: string, level: number) => {
@@ -43,19 +52,52 @@ export class BlogMarkdownComponent implements OnInit{
     };
   }
 
-  onReady(){
-    console.log("ready: parsing is completed")
+  onReady() {
+    // console.log("ready: parsing is completed")
     // console.log(this.titleArray);
     this.isReady.emit({
-      ready:true,
-      titles:this.titleArray
+      ready: true,
+      titles: this.titleArray
     });
     // this.cd.detectChanges();
   }
-  onLoad(){
+  onLoad() {
     // console.log("loading finish")
   }
   ngOnInit(): void {
-    this.renderHeading();
+
+    // UI control
+    this.breakpointServer.observe([
+      Breakpoints.XSmall,
+      Breakpoints.Small,
+      Breakpoints.Medium,
+      Breakpoints.Large,
+      Breakpoints.XLarge,
+    ]).pipe(takeUntil(this.destroyed)).subscribe(result => {
+      for(const query of Object.keys(result.breakpoints)){
+        if(result.breakpoints[query]){
+          this.markdown_width = `${window.innerWidth}px`;
+          break;
+        }
+      }
+    });
+
+
+    if (this.blogURL !== "") {
+      this.articleService.GetMarkdown(this.blogURL).subscribe({
+        next: (value) => {
+          this.markdownData = value;
+        },
+        error: (err) => {
+          this.markdownData = "# 文章不存在";
+        },
+        complete: () => {
+          this.renderHeading();
+        }
+      })
+    }
+  }
+  ngOnDestroy(): void {
+    this.destroyed.unsubscribe();
   }
 }

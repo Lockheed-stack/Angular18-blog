@@ -3,6 +3,7 @@ import { BlogIndexComponent } from './blog-index/blog-index.component';
 import { BlogDisplayComponent } from './blog-display/blog-display.component';
 import { IndexLayoutComponent } from './blog-index/index-layout/index-layout.component';
 import { IndexCategoryComponent } from './blog-index/index-category/index-category.component';
+import { authGuard } from './guard/auth.guard';
 
 export const routes: Routes = [
     {path:"",component:BlogIndexComponent,children:[
@@ -10,7 +11,10 @@ export const routes: Routes = [
         {path:"blog/:blogid",component:BlogDisplayComponent},
         {path:"category/:cid",component:IndexCategoryComponent},
     ]},
-    { path: "management", loadChildren: () => 
-        import("./management-center/management-center-routing.module").then(m=>m.ManagementCenterRoutingModule)
+    { 
+        path: "management", 
+        loadChildren: () => import("./management-center/management-center-routing.module").then(m=>m.ManagementCenterRoutingModule),
+        canActivate:[authGuard],
+        canActivateChild:[authGuard]
     }
 ];

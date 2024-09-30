@@ -8,7 +8,7 @@ import { MatListModule } from '@angular/material/list';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIconComponent } from '@ng-icons/core';
 import { Subscription } from 'rxjs';
-import { Article } from '../../../shared/interfaces/article';
+
 import { UploadImgComponent } from '../../../shared/uploads/upload-img/upload-img.component';
 import { MatStepperModule } from '@angular/material/stepper';
 import { TextFieldModule } from '@angular/cdk/text-field';
@@ -20,6 +20,7 @@ import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-d
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackBarComponent } from '../../../shared/snack-bar/snack-bar.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { ArticleInfo } from '../../../services/articles.service';
 interface EditableFieldConfig {
   lines: number,
   icon: string,
@@ -75,7 +76,7 @@ export class EditComponent implements OnInit, OnDestroy {
 
   // info relate various
   @Input() schema: Add_or_Update = Add_or_Update.none;
-  @Input() blogInfo: Article = null;
+  @Input() blogInfo: ArticleInfo = null;
   categoryName: string[] = [
     "Ne pro case",
     "possim dolorum.",
@@ -143,7 +144,7 @@ export class EditComponent implements OnInit, OnDestroy {
         break;
       }
       case "cover": {
-        this.blogInfo.Cover = val;
+        this.blogInfo.Img = val;
         break;
       }
       case "url": {
@@ -237,7 +238,7 @@ export class EditComponent implements OnInit, OnDestroy {
         setDefaultValue.category = val['category'];
       })
       setDefaultValue.desc = this.blogInfo.Desc;
-      setDefaultValue.cover = this.blogInfo.Cover === undefined ? "" : this.blogInfo.Cover;
+      setDefaultValue.cover = this.blogInfo.Img === undefined ? "" : this.blogInfo.Img;
       this.updatingForm.setValue(setDefaultValue);
     }else if(this.schema === Add_or_Update.add){
       this.blogInfo = {

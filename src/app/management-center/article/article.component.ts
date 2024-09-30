@@ -1,7 +1,7 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatGridListModule } from '@angular/material/grid-list';
-import { Article } from '../../shared/interfaces/article';
+
 import { MatPaginatorIntl, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -11,13 +11,14 @@ import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dial
 import { Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackBarComponent } from '../../shared/snack-bar/snack-bar.component';
+import { ArticleInfo } from '../../services/articles.service';
 
 
-var _selected_edit_blog: Article = null;
+var _selected_edit_blog: ArticleInfo = null;
 export function get_selected_edit_blog() {
   return _selected_edit_blog;
 }
-export function set_selected_edit_blog(blog: Article) {
+export function set_selected_edit_blog(blog: ArticleInfo) {
   _selected_edit_blog = { ...blog };
 }
 
@@ -65,7 +66,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
   ];
   selectedItem: string = this.categoryName[0];
 
-  blogs: Array<Article> = []
+  blogs: Array<ArticleInfo> = []
   length = 50;
   pageSize = 10;
   pageIndex = 0;
@@ -84,8 +85,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
         ID: Math.random() * 100,
         CID: Math.random() * 100,
         UID: Math.random() * 100,
-        CreateAt: new Date(Date.UTC(Math.trunc(Math.random() * 3000))).toLocaleString(),
-        UpdateAt: "2024",
+        CreatedAt: new Date(Date.UTC(Math.trunc(Math.random() * 3000))).toLocaleString(),
+        UpdatedAt: "2024",
         Title: "this is title",
         Desc: "this is description",
         Content: "this is content",
@@ -97,7 +98,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
   onCardClicked(blogID: number) {
     this.router.navigate(["blog", blogID])
   }
-  onEditBtnClicked(blog: Article) {
+  onEditBtnClicked(blog: ArticleInfo) {
     set_selected_edit_blog(blog);
     this.router.navigate(
       ['ModifyBlog'],
@@ -140,8 +141,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
         ID: Math.random() * 100,
         CID: Math.random() * 100,
         UID: Math.random() * 100,
-        CreateAt: "2024",
-        UpdateAt: "2024",
+        CreatedAt: "2024",
+        UpdatedAt: "2024",
         Title: "this is title",
         Desc: "this is description",
         Content: "this is content",

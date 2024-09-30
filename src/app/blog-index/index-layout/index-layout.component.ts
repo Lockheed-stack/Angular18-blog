@@ -1,7 +1,7 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { InfiniteCarouselComponent } from "../../shared/infinite-carousel/infinite-carousel.component";
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { NgStyle, NgFor } from '@angular/common';
+import { DecimalPipe  } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -10,10 +10,12 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Router, RouterOutlet } from '@angular/router';
 import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
 import { IndexCarouselComponent } from '../index-carousel/index-carousel.component';
-import { Observable } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 
-import { Article } from '../../shared/interfaces/article';
 import { GetRefreshBtnOffsetTop, SetRefreshBtnOffsetTop } from '../blog-index.component';
+import { CategoryInfo, CategoryService } from '../../services/category.service';
+import { ArticleInfo } from '../../services/articles.service';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-index-layout',
@@ -26,8 +28,7 @@ import { GetRefreshBtnOffsetTop, SetRefreshBtnOffsetTop } from '../blog-index.co
     MatIconModule,
     MatButtonModule,
     // Angular component
-    NgStyle,
-    NgFor,
+    DecimalPipe,
     RouterOutlet,
     // custom component
     MatProgressBarModule,
@@ -38,34 +39,29 @@ import { GetRefreshBtnOffsetTop, SetRefreshBtnOffsetTop } from '../blog-index.co
   templateUrl: './index-layout.component.html',
   styleUrl: './index-layout.component.scss'
 })
-export class IndexLayoutComponent {
+export class IndexLayoutComponent implements OnInit, OnDestroy {
   constructor(
-    private cd:ChangeDetectorRef,
-    private router:Router,
-  ){}
-  private element_grid_list:HTMLElement;
+    private cd: ChangeDetectorRef,
+    private router: Router,
+    private categoryService: CategoryService,
+    private breakpointServer: BreakpointObserver
+  ) { }
+
+  // variables of UI control
+  private element_grid_list: HTMLElement = null;
+  private element_grid_tile_abstract: HTMLElement = null;
   setCarouselWidth: number = 0;
   orientaion: number = 0;
   progressBarVal: number = 0;
-  refreshBtnTop:string = "";
-  articlesArray:Array<Article> = [];
+  refreshBtnTop: string = "";
+  destroyed = new Subject<void>();
+  categoryBreakPoint:number = 8;
+  blogAbstractBreakPoint: number = 9;
+  carouselBreakPoint: number = 3;
+  // variables of data
+  articlesArray: Array<ArticleInfo> = [];
+  categoryInfo: Array<CategoryInfo> = [];
 
-  categoryName:string[] = [
-    "Ne pro case", 
-    "possim dolorum.",
-    "Ne consul ubique",
-    "aperiri quo.",
-    "Et eum commodo facilis.Rebum",
-    "每次组件输入发生变化时运行。",
-    "ei pro",
-    "porro verear",
-    "malorum qui cu",
-    "eum ad purto",
-    "possit aliquid."
-  ];
-
-
-  test_observable = new Observable()
 
   onCarouselLeftClicked() {
     this.orientaion -= 1;
@@ -76,58 +72,107 @@ export class IndexLayoutComponent {
   onCarouselProgressBarUpdated(data: { idx: number, total: number }) {
     this.progressBarVal = ((data.idx + 1) / data.total) * 100;
   }
-
-  onCardClicked(blogID:number){
-    this.router.navigate(["blog",blogID]);
+  onResize() {
+    setTimeout(() => {
+      const offsetTop = this.getOffsetTop(this.element_grid_tile_abstract);
+      this.refreshBtnTop = `${offsetTop}px`;
+      SetRefreshBtnOffsetTop(offsetTop);
+    }, 200);
   }
-  onCategoryClicked(categoryID:number){
-    this.router.navigate(['category',categoryID]);
+  onCardClicked(blogID: number) {
+    this.router.navigate(["blog", blogID]);
   }
-  onRefreshBtnClicked(){
-    
+  onCategoryClicked(categoryID: number) {
+    this.router.navigate(['category', categoryID]);
+  }
+  getOffsetTop(el: HTMLElement) {
+    return el.offsetParent ? el.offsetTop + this.getOffsetTop(el.offsetParent as HTMLElement) : el.offsetTop;
+  }
+  onRefreshBtnClicked() {
     this.articlesArray = []
-    for(let i=0;i<6;i++){
+    for (let i = 0; i < 6; i++) {
       this.articlesArray.push({
-        ID:Math.random()*100,
-        CreateAt:new Date(Date.UTC(Math.trunc(Math.random()*3000))).toLocaleString(),
-        UpdateAt:"2024",
-        Title:"this is title",
-        Desc:"this is description",
-        Content:"this is content",
-        PageView:Math.random()*100
+        ID: Math.random() * 100,
+        CreatedAt: new Date(Date.UTC(Math.trunc(Math.random() * 3000))).toLocaleString(),
+        UpdatedAt: "2024",
+        Title: "this is title",
+        Desc: "this is description",
+        Content: "this is content",
+        PageView: Math.random() * 100
       })
     }
   }
 
   ngOnInit(): void {
 
-    this.element_grid_list = document.getElementById("grid-list") as HTMLElement
-    this.setCarouselWidth =  this.element_grid_list.offsetWidth * 0.333333 - 13.333;
+    // UI display control
+    this.element_grid_list = document.getElementById("grid-list") as HTMLElement;
+    this.breakpointServer.observe([
+      Breakpoints.XSmall,
+      Breakpoints.Small,
+    ]).pipe(takeUntil(this.destroyed)).subscribe(result => {
+      if (result.matches) {
+        this.categoryBreakPoint = 4;
+        this.blogAbstractBreakPoint = 4;
+        this.carouselBreakPoint = 4;
+        this.setCarouselWidth = this.element_grid_list.offsetWidth;
+      } else {
+        this.categoryBreakPoint = 8;
+        this.blogAbstractBreakPoint = 9;
+        this.carouselBreakPoint = 3;
+        this.setCarouselWidth = this.element_grid_list.offsetWidth * 0.333333 - 13.333;
+      }
+    });
+    this.onResize = this.onResize.bind(this);
+    window.addEventListener("resize",this.onResize);
 
-    for(let i=0;i<6;i++){
+    // get category info
+    this.categoryInfo = this.categoryService.GetCategoryInfoArray();
+    if (this.categoryInfo.length === 0) {
+      this.categoryService.GetAllCategory().subscribe({
+        next: (value) => {
+          this.categoryInfo = value;
+          this.categoryService.CacheCategoryInfoArray(value);
+        },
+        error: (err) => {
+          this.categoryInfo.push({
+            Name: "无法获取分类信息！",
+            ID: -1
+          })
+        }
+      })
+    }
+
+
+    for (let i = 0; i < 6; i++) {
       this.articlesArray.push({
-        ID:Math.random()*100,
-        CreateAt:"2024",
-        UpdateAt:"2024",
-        Title:"this is title",
-        Desc:"this is description",
-        Content:"this is content",
-        PageView:Math.random()*100
+        ID: Math.random() * 100,
+        CreatedAt: "2024",
+        UpdatedAt: "2024",
+        Title: "this is title this is title this is title this is title",
+        Desc: "this is description",
+        Content: "this is content",
+        PageView: Math.random() * 100
       })
     }
   }
+
   ngAfterViewInit(): void {
-    // if (this.refreshBtnTop === ""){
-    //   this.refreshBtnTop = `${this.element_grid_list.offsetTop}px`;
-    // }
+    this.element_grid_tile_abstract = document.getElementById("grid-tile-abstract-0") as HTMLElement;
     const offset = GetRefreshBtnOffsetTop();
-    if(offset<0){
-      const offsetTop = this.element_grid_list.offsetTop
+    if (offset < 0) {
+      // const offsetTop = this.element_grid_list.offsetTop;
+      const offsetTop = this.getOffsetTop(this.element_grid_tile_abstract);
       this.refreshBtnTop = `${offsetTop}px`;
       SetRefreshBtnOffsetTop(offsetTop);
-    }else{
+    } else {
       this.refreshBtnTop = `${offset}px`
     }
     this.cd.detectChanges()
+  }
+  ngOnDestroy(): void {
+    this.destroyed.next();
+    this.destroyed.complete();
+    window.removeEventListener("resize",this.onResize);
   }
 }
