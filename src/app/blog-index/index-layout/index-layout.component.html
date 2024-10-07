@@ -12,7 +12,7 @@
     </div>
 
     <div class="blog-abstract">
-        <mat-grid-list [cols]="blogAbstractBreakPoint" rowHeight="200px" gutterSize="15px" id="grid-list" >
+        <mat-grid-list [cols]="blogAbstractBreakPoint" rowHeight="200px" gutterSize="15px" id="grid-list">
             <mat-grid-tile [colspan]="carouselBreakPoint" rowspan="2" id="carousel-slide">
 
                 <button mat-icon-button style="left: 0;" (click)="onCarouselLeftClicked()">
@@ -29,13 +29,17 @@
 
             @for (item of articlesArray; track item.ID; let idx = $index) {
             <mat-grid-tile [colspan]="2" [rowspan]="1" id="grid-tile-abstract-{{idx}}">
+                @if (!loading) {
                 <mat-card class="example-card" appearance="outlined" (click)="onCardClicked(item.ID)">
                     <mat-card-header>
-                            <mat-card-title><span>{{item.Title}}</span></mat-card-title>
+                        <mat-card-title><span>{{item.Title}}</span></mat-card-title>
                     </mat-card-header>
-                    <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg">
+                    <img mat-card-image [src]="item.Img">
                 </mat-card>
                 <mat-grid-tile-footer>阅读量:{{item.PageView|number }}</mat-grid-tile-footer>
+                }@else {
+                    <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 4 }"></nz-skeleton>
+                }
             </mat-grid-tile>
             }
         </mat-grid-list>

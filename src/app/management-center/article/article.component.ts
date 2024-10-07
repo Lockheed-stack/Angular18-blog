@@ -83,8 +83,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
     for (let i = 0; i < event.pageSize; i++) {
       this.blogs.push({
         ID: Math.random() * 100,
-        CID: Math.random() * 100,
-        UID: Math.random() * 100,
+        Cid: Math.random() * 100,
+        Uid: Math.random() * 100,
         CreatedAt: new Date(Date.UTC(Math.trunc(Math.random() * 3000))).toLocaleString(),
         UpdatedAt: "2024",
         Title: "this is title",
@@ -139,8 +139,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
     for (let i = 0; i < this.pageSize; i++) {
       this.blogs.push({
         ID: Math.random() * 100,
-        CID: Math.random() * 100,
-        UID: Math.random() * 100,
+        Cid: Math.random() * 100,
+        Uid: Math.random() * 100,
         CreatedAt: "2024",
         UpdatedAt: "2024",
         Title: "this is title",

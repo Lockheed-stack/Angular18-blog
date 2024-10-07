@@ -1,25 +1,23 @@
 <div class="slider">
     <div class="slide-track" id="slide-track">
-        @for (text of TextArray; track text) {
+        @for (text of TextArray; track text.ID) {
         <div class="card-container" id="card-container">
-            <mat-card appearance="outlined" [ngStyle]="{'width.px':carouselWidth,}" (click)="onCardClicked(123)">
+            <mat-card appearance="outlined" [ngStyle]="{'width.px':carouselWidth,}" (click)="onCardClicked(text.ID)">
+                @if (loading) {
+                <nz-skeleton [nzActive]="true" [nzAvatar]="true" [nzParagraph]="{ rows: 8 }" style="padding: 5% 0;"></nz-skeleton>
+                }@else {
                 <mat-card-header>
-                    <div mat-card-avatar class="header-image"></div>
-                    <mat-card-title>Shiba Inu</mat-card-title>
-                    <mat-card-subtitle>Dog Breed</mat-card-subtitle>
+                    <div mat-card-avatar style="background-size: cover;" [ngStyle]="{'background-image':getUserInfo(text.Uid,'avatar')}"></div>
+                    <mat-card-title>{{text.Title}}</mat-card-title>
+                    <mat-card-subtitle>{{getUserInfo(text.Uid,"name")}}</mat-card-subtitle>
                 </mat-card-header>
-                <img src="https://material.angular.io/assets/img/examples/shiba2.jpg"
-                    alt="Photo of a Shiba Inu">
+                <img [src]="text.Img">
                 <mat-card-content>
                     <p>
-                        The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
-                        A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
-                        bred for hunting.
-                        The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
-                        A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
-                        bred for hunting.
+                        {{text.Desc}}
                     </p>
                 </mat-card-content>
+                }
             </mat-card>
         </div>
         }

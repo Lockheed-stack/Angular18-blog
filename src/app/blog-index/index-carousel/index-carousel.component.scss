@@ -9,7 +9,7 @@
     .card-container {
         margin: 2em;
         height: 410px;
-
+        box-sizing: border-box;
         :hover {
             cursor: pointer;
         }

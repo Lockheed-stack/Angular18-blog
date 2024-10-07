@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { InfiniteCarouselComponent } from "../../shared/infinite-carousel/infinite-carousel.component";
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { DecimalPipe  } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -14,8 +14,10 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 
 import { GetRefreshBtnOffsetTop, SetRefreshBtnOffsetTop } from '../blog-index.component';
 import { CategoryInfo, CategoryService } from '../../services/category.service';
-import { ArticleInfo } from '../../services/articles.service';
+import { ArticleInfo, ArticlesService } from '../../services/articles.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { GlobalService } from '../../services/global.service';
 
 @Component({
   selector: 'app-index-layout',
@@ -35,6 +37,8 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
     NavBarComponent,
     IndexCarouselComponent,
     InfiniteCarouselComponent,
+    // ng-zorro
+    NzSkeletonModule,
   ],
   templateUrl: './index-layout.component.html',
   styleUrl: './index-layout.component.scss'
@@ -44,6 +48,8 @@ export class IndexLayoutComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
     private router: Router,
     private categoryService: CategoryService,
+    private articleService: ArticlesService,
+    private globalService: GlobalService,
     private breakpointServer: BreakpointObserver
   ) { }
 
@@ -55,9 +61,10 @@ export class IndexLayoutComponent implements OnInit, OnDestroy {
   progressBarVal: number = 0;
   refreshBtnTop: string = "";
   destroyed = new Subject<void>();
-  categoryBreakPoint:number = 8;
+  categoryBreakPoint: number = 8;
   blogAbstractBreakPoint: number = 9;
   carouselBreakPoint: number = 3;
+  loading: boolean = true;
   // variables of data
   articlesArray: Array<ArticleInfo> = [];
   categoryInfo: Array<CategoryInfo> = [];
@@ -88,19 +95,42 @@ export class IndexLayoutComponent implements OnInit, OnDestroy {
   getOffsetTop(el: HTMLElement) {
     return el.offsetParent ? el.offsetTop + this.getOffsetTop(el.offsetParent as HTMLElement) : el.offsetTop;
   }
-  onRefreshBtnClicked() {
-    this.articlesArray = []
-    for (let i = 0; i < 6; i++) {
-      this.articlesArray.push({
-        ID: Math.random() * 100,
-        CreatedAt: new Date(Date.UTC(Math.trunc(Math.random() * 3000))).toLocaleString(),
-        UpdatedAt: "2024",
-        Title: "this is title",
-        Desc: "this is description",
-        Content: "this is content",
-        PageView: Math.random() * 100
-      })
+  setRefreshBtnLocation() {
+    this.element_grid_tile_abstract = document.getElementById("grid-tile-abstract-0") as HTMLElement;
+    const offset = GetRefreshBtnOffsetTop();
+    if (offset < 0) {
+      // const offsetTop = this.element_grid_list.offsetTop;
+      const offsetTop = this.getOffsetTop(this.element_grid_tile_abstract);
+      this.refreshBtnTop = `${offsetTop}px`;
+      SetRefreshBtnOffsetTop(offsetTop);
+    } else {
+      this.refreshBtnTop = `${offset}px`
     }
+  }
+  onRefreshBtnClicked() {
+    this.loading = true;
+    this.articlesArray = this.articleService.GetArticlePlaceholder(6);
+    this.articleService.GetArticlesByRandom(6).subscribe({
+      next: (value) => {
+        console.log(value.result);
+        this.articlesArray = value.result;
+        setTimeout(() => {
+          this.loading = false;
+        }, 500);
+      },
+      error: (err) => {
+        this.articlesArray = [];
+        this.articlesArray.push({
+          ID: -1,
+          Title: "文章服务出现问题",
+          Desc: "placeholder",
+          Content: "placeholder",
+          Img: this.globalService.imagePlaceholder,
+          PageView: 0
+        })
+        this.loading = false;
+      },
+    })
   }
 
   ngOnInit(): void {
@@ -124,7 +154,7 @@ export class IndexLayoutComponent implements OnInit, OnDestroy {
       }
     });
     this.onResize = this.onResize.bind(this);
-    window.addEventListener("resize",this.onResize);
+    window.addEventListener("resize", this.onResize);
 
     // get category info
     this.categoryInfo = this.categoryService.GetCategoryInfoArray();
@@ -143,36 +173,41 @@ export class IndexLayoutComponent implements OnInit, OnDestroy {
       })
     }
 
-
-    for (let i = 0; i < 6; i++) {
-      this.articlesArray.push({
-        ID: Math.random() * 100,
-        CreatedAt: "2024",
-        UpdatedAt: "2024",
-        Title: "this is title this is title this is title this is title",
-        Desc: "this is description",
-        Content: "this is content",
-        PageView: Math.random() * 100
-      })
-    }
+    // get random blogs
+    this.articlesArray = this.articleService.GetArticlePlaceholder(6);
+    this.articleService.GetArticlesByRandom(6).subscribe({
+      next: (value) => {
+        this.articlesArray = value.result;
+        setTimeout(() => {
+          this.loading = false;
+        }, 500);
+      },
+      error: (err) => {
+        this.articlesArray = [];
+        this.articlesArray.push({
+          ID: -1,
+          Title: "文章服务出现问题",
+          Desc: "placeholder",
+          Content: "placeholder",
+          Img: this.globalService.imagePlaceholder,
+          PageView: 0
+        })
+        this.loading = false;
+        this.setRefreshBtnLocation();
+      },
+      complete: () => {
+        // set refresh button location
+        this.setRefreshBtnLocation();
+      }
+    })
   }
 
   ngAfterViewInit(): void {
-    this.element_grid_tile_abstract = document.getElementById("grid-tile-abstract-0") as HTMLElement;
-    const offset = GetRefreshBtnOffsetTop();
-    if (offset < 0) {
-      // const offsetTop = this.element_grid_list.offsetTop;
-      const offsetTop = this.getOffsetTop(this.element_grid_tile_abstract);
-      this.refreshBtnTop = `${offsetTop}px`;
-      SetRefreshBtnOffsetTop(offsetTop);
-    } else {
-      this.refreshBtnTop = `${offset}px`
-    }
-    this.cd.detectChanges()
+
   }
   ngOnDestroy(): void {
     this.destroyed.next();
     this.destroyed.complete();
-    window.removeEventListener("resize",this.onResize);
+    window.removeEventListener("resize", this.onResize);
   }
 }

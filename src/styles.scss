@@ -26,6 +26,10 @@ body {
 body.darkMode {
     @include mat.all-component-colors(m3-theme.$dark-theme);
     @include mat.color-variants-backwards-compatibility(m3-theme.$dark-theme);
+
+    blockquote{
+        background-color: #1b2a3c;
+    }
 }
 
 // customer style
