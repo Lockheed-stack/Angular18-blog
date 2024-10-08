@@ -16,8 +16,11 @@ jobs:
         with:
           node-version: v22.6.0
           cache: 'npm'
-      - run: npm install
-
+      - run: npm ci
+      
+      - name: Modify ngx-markdown
+        run: pwd; cp -r modified_node_modules/ngx-markdown node_modules
+        
       - name: Install angularCli
         run: npm install -g @angular/cli
       
