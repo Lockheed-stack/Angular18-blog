@@ -37,6 +37,7 @@ yarn-error.log
 testem.log
 /typings
 *.openapi.yaml
+.something
 # System files
 .DS_Store
 Thumbs.db
