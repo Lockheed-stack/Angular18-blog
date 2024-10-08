@@ -18,9 +18,12 @@ jobs:
           cache: 'npm'
       - run: npm ci
       
+      - name: print current path
+        run: echo $(pwd)
+
       - name: Modify ngx-markdown
-        run: pwd; cp -r modified_node_modules/ngx-markdown node_modules
-        
+        run: cp -r modified_node_modules/ngx-markdown node_modules
+
       - name: Install angularCli
         run: npm install -g @angular/cli
       
