@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { MarkdownModule, MarkdownService } from 'ngx-markdown';
+import { KatexOptions, MarkdownModule, MarkdownService } from 'ngx-markdown';
 import { ArticlesService } from '../../services/articles.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Subject, takeUntil } from 'rxjs';
@@ -36,6 +36,11 @@ export class BlogMarkdownComponent implements OnInit, OnDestroy {
   titleNum: number = 0;
   markdownData: string = "";
   markdown_width:string = "980px";
+  katexOpt: KatexOptions = {
+    throwOnError: false,
+    output:"mathml",
+    displayMode:true
+  }
   destroyed = new Subject<void>();
 
   renderHeading() {

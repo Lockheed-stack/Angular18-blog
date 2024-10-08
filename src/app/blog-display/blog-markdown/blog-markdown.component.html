@@ -4,7 +4,7 @@
     <!-- src="https://blog.csdn.net/HELLO_E_SIR/article/details/131819598" -->
     <!-- src="http://cdn.lee-marcus.one/GO%20slice%20-%20upload.md" -->
     @if (markdownData!=="") {
-    <markdown ngPreserveWhitespaces emoji katex [data]="markdownData" [disableSanitizer]="true" (load)="onLoad()"
+    <markdown ngPreserveWhitespaces emoji katex [katexOptions]="katexOpt" [data]="markdownData" [disableSanitizer]="true" (load)="onLoad()"
         (ready)="onReady()">
     </markdown>
     }
