@@ -1,0 +1,38 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: v22.6.0
+          cache: 'npm'
+      - run: npm ci
+
+      - name: Install angularCli
+        run: npm install -g @angular/cli
+      
+      - name: Build app
+        run: ng build
+
+      - name: ssh deploy
+        uses: easingthemes/ssh-deploy@v5.1.0
+        with:
+          SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+          REMOTE_HOST: ${{secrets.SERVER_HOST}}
+          REMOTE_PORT: ${{secrets.SERVER_PORT}}
+          REMOTE_USER: ${{secrets.SERVER_USER}}
+          TARGET: ${{secrets.REMOTE_TARGET}}
+          SOURCE: dist/
+
+    
+        
