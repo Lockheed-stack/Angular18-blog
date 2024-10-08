@@ -26,7 +26,7 @@ export class EditMarkdownComponent implements OnInit {
   firstRender: boolean = true;
   katexOpt: KatexOptions = {
     throwOnError: false,
-    output:"mathml",
+    // output:"mathml",
     displayMode:true
   }
 
