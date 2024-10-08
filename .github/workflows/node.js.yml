@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: v22.6.0
           cache: 'npm'
-      - run: npm ci
+      - run: npm install
 
       - name: Install angularCli
         run: npm install -g @angular/cli
