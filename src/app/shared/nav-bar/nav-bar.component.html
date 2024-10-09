@@ -5,7 +5,7 @@
 
     @if (avatarURL!=='') {
     <button mat-icon-button [matMenuTriggerFor]="menu">
-        <img mat-card-avatar [src]="avatarURL" alt="">
+        <img style="border-radius: 50%;" [src]="avatarURL" alt="">
     </button>
     <mat-menu #menu="matMenu" xPosition="before">
         <button mat-menu-item (click)="onManageBtnClicked()">

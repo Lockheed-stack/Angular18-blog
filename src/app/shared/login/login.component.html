@@ -12,7 +12,7 @@
                     <input matInput placeholder="请输入账号" formControlName="username">
 
                     @if (signinForm.get('username').invalid && signinForm.get('username').errors['required']) {
-                    <mat-error>username required!</mat-error>
+                    <mat-error>请输入用户名!</mat-error>
                     }
                 </mat-form-field>
 
@@ -24,7 +24,7 @@
                         <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
                     </button>
                     @if (signinForm.get('password').invalid&& signinForm.get('password').errors['required']) {
-                    <mat-error>password required!</mat-error>
+                    <mat-error>请输入密码!</mat-error>
                     }
                 </mat-form-field>
                 

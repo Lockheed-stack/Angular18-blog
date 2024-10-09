@@ -3,6 +3,7 @@ import { KatexOptions, MarkdownModule, MarkdownService } from 'ngx-markdown';
 import { ArticlesService } from '../../services/articles.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Subject, takeUntil } from 'rxjs';
+import { NgStyle } from '@angular/common';
 // import hljs from 'highlight.js/lib/common';
 // import hljs_dockerfile from 'highlight.js/lib/languages/dockerfile'
 
@@ -20,6 +21,7 @@ export interface Title {
   standalone: true,
   imports: [
     MarkdownModule,
+    NgStyle
   ],
   templateUrl: './blog-markdown.component.html',
   styleUrl: './blog-markdown.component.scss'
@@ -36,6 +38,7 @@ export class BlogMarkdownComponent implements OnInit, OnDestroy {
   titleNum: number = 0;
   markdownData: string = "";
   markdown_width:string = "980px";
+  markdown_padding:string = "45px";
   katexOpt: KatexOptions = {
     throwOnError: false,
     output:"mathml",
@@ -82,6 +85,24 @@ export class BlogMarkdownComponent implements OnInit, OnDestroy {
       for(const query of Object.keys(result.breakpoints)){
         if(result.breakpoints[query]){
           this.markdown_width = `${window.innerWidth}px`;
+          switch(query){
+            case Breakpoints.XSmall:{
+              this.markdown_padding = "10px";
+              break;
+            }
+            case Breakpoints.Small:{
+              this.markdown_padding = "15px";
+              break;
+            }
+            case Breakpoints.Medium:{
+              this.markdown_padding = "30px";
+              break;
+            }
+            default:{
+              this.markdown_padding = "45px";
+              break;
+            }
+          }
           break;
         }
       }

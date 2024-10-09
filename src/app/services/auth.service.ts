@@ -2,17 +2,14 @@ import { Injectable } from '@angular/core';
 import { GlobalService } from './global.service';
 import { catchError, map, Observable, of } from 'rxjs';
 import { HttpClient, HttpErrorResponse, HttpResponseBase, HttpStatusCode } from '@angular/common/http';
-
+import { UserInfo } from './user.service'
 export interface LoginRequest {
   UserName: string,
   Password: string
 }
 
 export interface LoginRespond {
-  result: string | {
-    UID: string,
-    avatar?: string,
-  },
+  result: string | UserInfo,
   token?: string
 }
 
@@ -40,7 +37,7 @@ export class AuthService {
 
   token_check(): Observable<number> {
     const url = this.domain.domain + "management/user/token-check";
-    return this.http.post<{result:string}>(
+    return this.http.post<{ result: string }>(
       url,
       {}
     ).pipe(

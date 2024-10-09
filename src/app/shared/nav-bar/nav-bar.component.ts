@@ -41,9 +41,9 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
   toggleTheme() {
     const result = this.dark_light_srv.toggle_theme();
-    if (result){
+    if (result) {
       this.theme = "dark_mode";
-    }else{
+    } else {
       this.theme = "light_mode";
     }
   }
@@ -53,7 +53,8 @@ export class NavBarComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.loginDialogRef.afterClosed().subscribe(() => {
         if (this.loginDialogRef.componentInstance.authUserResult === 0) {
-          this.avatarURL = "https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png";
+          const avatar = window.sessionStorage.getItem('avatar');
+          this.avatarURL = avatar;
         }
       })
     )
@@ -82,8 +83,13 @@ export class NavBarComponent implements OnInit, OnDestroy {
       width: "980px",
       maxWidth: "980px",
     }
-    if(this.dark_light_srv.get_theme()){
+    if (this.dark_light_srv.get_theme()) {
       this.theme = "dark_mode";
+    }
+
+    const avatar = window.sessionStorage.getItem('avatar');
+    if (avatar !== null) {
+      this.avatarURL = avatar;
     }
   }
   ngOnDestroy(): void {

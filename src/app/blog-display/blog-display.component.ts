@@ -70,6 +70,7 @@ export class BlogDisplayComponent implements OnInit, OnChanges {
   onBookMarkItemClicked(titleID: string) {
     const element = document.getElementById(titleID);
     element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'start' });
+    this.openSidebar = false;
   }
   snackBarTips(content: string) {
     this.snackbar.openFromComponent(SnackBarComponent, {

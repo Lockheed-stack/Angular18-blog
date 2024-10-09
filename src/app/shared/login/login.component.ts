@@ -13,6 +13,8 @@ import { AuthService } from '../../services/auth.service';
 import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackBarComponent } from '../snack-bar/snack-bar.component';
+import { UserInfo } from '../../services/user.service';
+import { GlobalService } from '../../services/global.service';
 
 enum Result {
   success,
@@ -40,7 +42,8 @@ enum Result {
 export class LoginComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<LoginComponent>,
-    private authService: AuthService
+    private authService: AuthService,
+    private globalService: GlobalService
   ) { }
   snackbar = inject(MatSnackBar);
   signinForm: FormGroup;
@@ -51,8 +54,22 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     this.loginBtnDisable = true;
     this.authUserResult = Result.none;
+    
     const username = this.signinForm.value['username'];
     const passwd = this.signinForm.value['password'];
+    // check inputs validation
+    if (username === null || this.signinForm.get('username').invalid){
+      this.signinForm.value['username'] = "";
+      this.loginBtnDisable = false;
+      return
+    }
+    if (passwd === null || this.signinForm.get('password').invalid){
+      this.signinForm.value['password'] = "";
+      this.loginBtnDisable = false;
+      return
+    }
+
+    // login logic
     this.authService.login_auth(username, passwd).subscribe({
       next: (value) => {
         if (value.token === undefined) { // failed to login
@@ -60,11 +77,11 @@ export class LoginComponent implements OnInit {
           this.loginBtnDisable = false;
         } else { // login successfully
           this.authUserResult = Result.success;
-          // if ((value.result instanceof String)) {
-          //   window.sessionStorage.setItem('UID', value.result.);
-          // }
-          window.sessionStorage.setItem('UID', value.result as string);
+          const result = value.result as UserInfo
+          window.sessionStorage.setItem('UID', String(result.ID));
           window.sessionStorage.setItem('token', value.token);
+          window.sessionStorage.setItem('username',result.Username);
+          result.Avatar === undefined? window.sessionStorage.setItem('avatar',this.globalService.avatarPlaceholder):window.sessionStorage.setItem('avatar',result.Avatar);
           setTimeout(() => {
             this.dialogRef.close();
           }, 1500);

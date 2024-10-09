@@ -43,7 +43,7 @@
             </mat-grid-tile>
             }
         </mat-grid-list>
-        <button mat-stroked-button id="refresh" [style.top]="refreshBtnTop" (click)="onRefreshBtnClicked()">
+        <button mat-stroked-button id="refresh" [ngStyle]="{'top':refreshBtnTop,'visibility':refreshBtnVisible}" (click)="onRefreshBtnClicked()">
             <mat-icon>restart_alt</mat-icon>
             试试手气
         </button>

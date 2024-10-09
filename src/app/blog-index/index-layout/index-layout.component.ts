@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { InfiniteCarouselComponent } from "../../shared/infinite-carousel/infinite-carousel.component";
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, NgStyle } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -32,6 +32,7 @@ import { GlobalService } from '../../services/global.service';
     // Angular component
     DecimalPipe,
     RouterOutlet,
+    NgStyle,
     // custom component
     MatProgressBarModule,
     NavBarComponent,
@@ -60,6 +61,7 @@ export class IndexLayoutComponent implements OnInit, OnDestroy {
   orientaion: number = 0;
   progressBarVal: number = 0;
   refreshBtnTop: string = "";
+  refreshBtnVisible:string = "hidden";
   destroyed = new Subject<void>();
   categoryBreakPoint: number = 8;
   blogAbstractBreakPoint: number = 9;
@@ -84,7 +86,7 @@ export class IndexLayoutComponent implements OnInit, OnDestroy {
       const offsetTop = this.getOffsetTop(this.element_grid_tile_abstract);
       this.refreshBtnTop = `${offsetTop}px`;
       SetRefreshBtnOffsetTop(offsetTop);
-    }, 200);
+    }, 400);
   }
   onCardClicked(blogID: number) {
     this.router.navigate(["blog", blogID]);
@@ -96,15 +98,15 @@ export class IndexLayoutComponent implements OnInit, OnDestroy {
     return el.offsetParent ? el.offsetTop + this.getOffsetTop(el.offsetParent as HTMLElement) : el.offsetTop;
   }
   setRefreshBtnLocation() {
-    this.element_grid_tile_abstract = document.getElementById("grid-tile-abstract-0") as HTMLElement;
-    const offset = GetRefreshBtnOffsetTop();
-    if (offset < 0) {
-      // const offsetTop = this.element_grid_list.offsetTop;
-      const offsetTop = this.getOffsetTop(this.element_grid_tile_abstract);
+    const pre_offset = GetRefreshBtnOffsetTop();
+    this.refreshBtnVisible = "visible";
+    if (pre_offset < 0) {
+      this.element_grid_tile_abstract = document.getElementById("grid-tile-abstract-0") as HTMLElement;
+      const offsetTop = this.element_grid_tile_abstract.getBoundingClientRect().top;
       this.refreshBtnTop = `${offsetTop}px`;
       SetRefreshBtnOffsetTop(offsetTop);
     } else {
-      this.refreshBtnTop = `${offset}px`
+      this.refreshBtnTop = `${pre_offset}px`
     }
   }
   onRefreshBtnClicked() {
@@ -112,7 +114,7 @@ export class IndexLayoutComponent implements OnInit, OnDestroy {
     this.articlesArray = this.articleService.GetArticlePlaceholder(6);
     this.articleService.GetArticlesByRandom(6).subscribe({
       next: (value) => {
-        console.log(value.result);
+        // console.log(value.result);
         this.articlesArray = value.result;
         setTimeout(() => {
           this.loading = false;
@@ -180,6 +182,7 @@ export class IndexLayoutComponent implements OnInit, OnDestroy {
         this.articlesArray = value.result;
         setTimeout(() => {
           this.loading = false;
+          this.setRefreshBtnLocation();
         }, 500);
       },
       error: (err) => {
@@ -195,10 +198,6 @@ export class IndexLayoutComponent implements OnInit, OnDestroy {
         this.loading = false;
         this.setRefreshBtnLocation();
       },
-      complete: () => {
-        // set refresh button location
-        this.setRefreshBtnLocation();
-      }
     })
   }
 
