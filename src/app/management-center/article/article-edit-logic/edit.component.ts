@@ -35,7 +35,7 @@ enum Add_or_Update {
 }
 
 @Component({
-  selector: 'app-edit',
+  selector: 'app-article-edit',
   standalone: true,
   imports: [
     MatIconModule,

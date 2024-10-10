@@ -1,23 +1,36 @@
-.accordion{
-    mat-panel-title{
+.accordion {
+    mat-panel-title {
         font-weight: bold;
     }
-    mat-grid-tile{
+
+    mat-grid-tile {
         border-radius: 1em;
     }
-    .stat-text{
-        mat-card{
+
+    .stat-text {
+        mat-card {
             width: 60%;
             height: 90%;
             box-shadow: 0 0 6px 3px #336b00;
+            mat-card-subtitle{
+                font-size: 14px;
+                opacity: 0.65;
+                margin-bottom: 10px;
+            }
+            mat-card-content{
+                font-size: 24px;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            }
         }
     }
-    .stat-chart{
-        mat-card{
+
+    .stat-chart {
+        mat-card {
             width: 95%;
             height: 95%;
             box-shadow: 0 0 6px 3px #890f97bc;
-            mat-card-content{
+
+            mat-card-content {
                 width: 100%;
                 height: 100%;
             }

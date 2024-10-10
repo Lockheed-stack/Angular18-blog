@@ -3,10 +3,13 @@ import { GlobalService } from './global.service';
 import { HttpClient } from '@angular/common/http';
 
 export interface UserInfo{
+  ID:number,
   Username:string,
   Avatar?:string,
   SelfDesc?:string,
-  ID:number
+  Location?: string,
+  Email?: string,
+  Github?: string
 }
 
 

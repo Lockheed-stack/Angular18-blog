@@ -4,7 +4,6 @@ import { MatCardModule } from '@angular/material/card';
 import { ChartModule } from 'primeng/chart';
 import { ChartjsConfigService } from '../../services/chartjs-config.service';
 import {MatExpansionModule} from '@angular/material/expansion';
-import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 interface statistic_text {
   cols: number;
   rows: number;
@@ -31,7 +30,6 @@ interface statistic_chart {
     MatCardModule,
     ChartModule,
     MatExpansionModule,
-    NzStatisticModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'

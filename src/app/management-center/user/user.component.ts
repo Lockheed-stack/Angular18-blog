@@ -14,16 +14,9 @@ import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 import { SnackBarComponent } from '../../shared/snack-bar/snack-bar.component';
 import { UploadImgComponent } from '../../shared/uploads/upload-img/upload-img.component';
 import { Subscription } from 'rxjs';
+import {UserInfo} from '../../services/user.service'
+import { GlobalService } from '../../services/global.service';
 
-export interface UserInfo {
-  UID: number,
-  nickname: string,
-  avatar?: string,
-  desc?: string,
-  location?: string,
-  email?: string,
-  github?: string
-}
 interface EditableFieldConfig {
   lines: number,
   icon: string,
@@ -56,17 +49,17 @@ export class UserComponent implements OnInit, OnDestroy {
   readonly snackbar = inject(MatSnackBar);
   snackbarRef: MatSnackBarRef<SnackBarComponent>;
 
+  readonly globalService = inject(GlobalService);
   userInfo: UserInfo = {
-    UID: 123456789,
-    avatar: "https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png",
-    nickname: "Muhammed Erdem",
-    desc: `Lorem ipsum dolor sit amet, Ut enim ad minim veniam, 
-    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.`,
-    location: "unknown",
-    email: "example@example.com",
-    github: "https://github.com"
+    ID: -1,
+    Avatar: this.globalService.avatarPlaceholder,
+    Username: "未知",
+    SelfDesc: `写点什么吧...`,
+    Location: "未知",
+    Email: "未知",
+    Github: "未知"
   }
-  userInfoBackup: UserInfo = { ...this.userInfo };
+  userInfoBackup: UserInfo = null;
   editMode: boolean = false;
   EditableFields: Array<EditableFieldConfig> = [
     { lines: 2, icon: "badge", label: "新昵称", formControlName: "nickname" },
@@ -94,27 +87,27 @@ export class UserComponent implements OnInit, OnDestroy {
     }
     switch (field) {
       case "nickname": {
-        this.userInfo.nickname = val;
+        this.userInfo.Username = val;
         break;
       }
       case "email": {
-        this.userInfo.email = val;
+        this.userInfo.Email = val;
         break;
       }
       case "github": {
-        this.userInfo.github = val;
+        this.userInfo.Github = val;
         break;
       }
       case "location": {
-        this.userInfo.location = val;
+        this.userInfo.Location = val;
         break;
       }
       case "desc": {
-        this.userInfo.desc = val;
+        this.userInfo.SelfDesc = val;
         break;
       }
       case "avatar": {
-        this.userInfo.avatar = val;
+        this.userInfo.Avatar = val;
       }
     }
   }
@@ -170,6 +163,12 @@ export class UserComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // get userinfo
+    this.userInfo.Avatar = window.sessionStorage.getItem("avatar");
+    this.userInfo.ID = Number(window.sessionStorage.getItem("UID"));
+    this.userInfo.Username = window.sessionStorage.getItem("username");
+    this.userInfoBackup = {...this.userInfo};
+    // form control
     this.updatingForm = new FormGroup({
       "nickname": new FormControl(null,[Validators.maxLength(20)]),
       "desc": new FormControl(null,[Validators.maxLength(150)]),
@@ -179,12 +178,12 @@ export class UserComponent implements OnInit, OnDestroy {
       "avatar": new FormControl()
     })
     const setDefaultValue={
-      nickname: this.userInfo.nickname,
-      desc:this.userInfo.desc,
-      location:this.userInfo.location,
-      email:this.userInfo.email,
-      github:this.userInfo.github,
-      avatar:this.userInfo.avatar
+      nickname: this.userInfo.Username,
+      desc:this.userInfo.SelfDesc,
+      location:this.userInfo.Location,
+      email:this.userInfo.Email,
+      github:this.userInfo.Github,
+      avatar:this.userInfo.Avatar
     }
     this.updatingForm.setValue(setDefaultValue);
   }

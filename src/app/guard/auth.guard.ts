@@ -1,4 +1,4 @@
-import { inject } from '@angular/core';
+import { ComponentRef, inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { LoginComponent } from '../shared/login/login.component';
@@ -47,7 +47,13 @@ export const authGuard: CanActivateFn = (route, state) => {
               content: "用户身份认证过期，请重新登录"
             }
           })
-          router.navigate([""])
+          window.sessionStorage.clear();
+          
+          if (route.url.length === 0){ // in root Route
+            location.reload();
+          }else{
+            router.navigate([""]);
+          }
           return false;
         }
         case HttpStatusCode.Ok: {

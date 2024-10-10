@@ -1,29 +1,29 @@
 <div class="wrapper">
     <div class="profile-card">
         <div class="profile-card__img">
-            <img [src]="userInfo.avatar" alt="profile card">
+            <img [src]="userInfo.Avatar" alt="profile card">
         </div>
 
         <div class="profile-card__cnt">
-            <div class="profile-card__txt"><strong>UID: </strong>{{userInfo.UID}}</div>
-            <div class="profile-card__txt"><strong>{{userInfo.nickname}}</strong></div>
-            <div class="profile-card__txt">{{userInfo.desc}}</div>
+            <div class="profile-card__txt"><strong>UID：</strong>{{userInfo.ID}}</div>
+            <div class="profile-card__txt"><strong>用户名：{{userInfo.Username}}</strong></div>
+            <div class="profile-card__txt">简介：{{userInfo.SelfDesc}}</div>
             <div class="profile-card-loc">
                 <mat-icon>location_on</mat-icon>
                 <span class="profile-card-loc__txt">
-                    {{userInfo.location}}
+                    {{userInfo.Location}}
                 </span>
             </div>
             <div class="profile-card-loc">
                 <mat-icon>mail</mat-icon>
                 <span class="profile-card-loc__txt">
-                    {{userInfo.email}}
+                    {{userInfo.Email}}
                 </span>
             </div>
             <div class="profile-card-loc">
                 <mat-icon> <ng-icon name="bootstrapGithub"></ng-icon> </mat-icon>
                 <span class="profile-card-loc__txt">
-                    <a target="_blank" [href]="userInfo.github">{{userInfo.github}}</a>
+                    <a target="_blank" [href]="userInfo.Github">{{userInfo.Github}}</a>
                 </span>
             </div>
         </div>
@@ -70,7 +70,7 @@
                             <mat-error>{{onInputInvalid(item.formControlName)}}</mat-error>
                         }
                         @if (item.formControlName === 'desc') {
-                            <mat-hint>字数{{userInfo.desc.length}}/150</mat-hint>
+                            <mat-hint>字数{{userInfo.SelfDesc.length}}/150</mat-hint>
                         }
                     </mat-form-field>
                     }

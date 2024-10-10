@@ -50,7 +50,7 @@ export class ManagementCenterComponent implements OnInit, OnDestroy {
   sideNavExpandCtr: Map<string, boolean> = new Map<string, boolean>([
     ["article", false],
     ["category", false],
-    ["",true]
+    ["", true]
   ])
   sideNavList: Array<ListOptionContent> = [
     { router_navgate: "dashboard", isSelected: true, icon: "query_stats", content: "统计信息", extend: false, level: 1, belongTo: "" },
@@ -58,6 +58,10 @@ export class ManagementCenterComponent implements OnInit, OnDestroy {
     { router_navgate: "article", isSelected: false, icon: "article", content: "文章管理", extend: true, level: 1, belongTo: "" },
     { router_navgate: "allArticle", isSelected: false, icon: "view_cozy", content: "我的文章", extend: false, level: 2, belongTo: "article" },
     { router_navgate: "WriteArticle", isSelected: false, icon: "edit_note", content: "写文章", extend: false, level: 2, belongTo: "article" },
+    { router_navgate: "category", isSelected: false, icon: "category", content: "文章分类", extend: true, level: 1, belongTo: "" },
+    { router_navgate: "allCategory", isSelected: false, icon: "ballot", content: "所有分类", extend: false, level: 2, belongTo: "category" },
+    { router_navgate: "addCategory", isSelected: false, icon: "add", content: "添加分类", extend: false, level: 2, belongTo: "category" },
+
   ]
   onLogoutBtnClicked() {
     this.logoutDialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -77,10 +81,17 @@ export class ManagementCenterComponent implements OnInit, OnDestroy {
 
   onNavBtnClick(dest: string) {
     switch (dest) {
-      case "article":
+      case "article":{
+
         const val = !this.sideNavExpandCtr.get("article");
         this.sideNavExpandCtr.set("article", val);
         break;
+      }
+      case "category":{
+        const val = !this.sideNavExpandCtr.get("category");
+        this.sideNavExpandCtr.set("category", val);
+        break;
+      }
       default:
         this.router.navigate([dest], { relativeTo: this.route });
 
@@ -92,16 +103,16 @@ export class ManagementCenterComponent implements OnInit, OnDestroy {
 
   toggleTheme() {
     const result = this.dark_light_srv.toggle_theme();
-    if (result){
+    if (result) {
       this.theme = "dark_mode";
-    }else{
+    } else {
       this.theme = "light_mode";
     }
   }
 
   ngOnInit() {
     // this.router.navigate(['dashboard'],{relativeTo:this.route})
-    if(this.dark_light_srv.get_theme()){
+    if (this.dark_light_srv.get_theme()) {
       this.theme = "dark_mode";
     }
   }
