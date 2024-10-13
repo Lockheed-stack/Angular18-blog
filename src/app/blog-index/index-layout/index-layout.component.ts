@@ -114,7 +114,6 @@ export class IndexLayoutComponent implements OnInit, OnDestroy {
     this.articlesArray = this.articleService.GetArticlePlaceholder(6);
     this.articleService.GetArticlesByRandom(6).subscribe({
       next: (value) => {
-        // console.log(value.result);
         this.articlesArray = value.result;
         setTimeout(() => {
           this.loading = false;
