@@ -38,7 +38,7 @@ jobs:
           REMOTE_PORT: ${{secrets.SERVER_PORT}}
           REMOTE_USER: ${{secrets.SERVER_USER}}
           TARGET: ${{secrets.REMOTE_TARGET}}
-          SOURCE: dist/
+          SOURCE: dist/angular18-blog/browser
 
     
         
