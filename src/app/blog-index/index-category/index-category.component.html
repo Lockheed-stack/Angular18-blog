@@ -10,7 +10,7 @@
                       <mat-card-subtitle>{{item.CreatedAt|date:'y MMM d'}}</mat-card-subtitle>
                       <!-- <img mat-card-sm-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" > -->
                   </mat-card-header>
-                  <img mat-card-md-image src="https://{{item.Img}}" >
+                  <img mat-card-md-image [src]="item.Img" >
                   <mat-card-content>
                     <p>{{item.Desc}}</p>
                   </mat-card-content>
