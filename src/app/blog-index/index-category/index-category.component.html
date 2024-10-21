@@ -6,7 +6,7 @@
         <mat-grid-tile colspan="1" rowspan="1">
             <mat-card (click)="onCardClicked(item.ID)">
                 <mat-card-header>
-                      <mat-card-title>{{item.Title}}</mat-card-title>
+                      <mat-card-title [title]="item.Title">{{item.Title}}</mat-card-title>
                       <mat-card-subtitle>{{item.CreatedAt|date:'y MMM d'}}</mat-card-subtitle>
                       <!-- <img mat-card-sm-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" > -->
                   </mat-card-header>

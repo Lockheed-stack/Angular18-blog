@@ -21,6 +21,13 @@ mat-card {
     height: 95%;
     width: 95%;
     border: 1px solid var(--mdc-filled-button-container-color);
+    mat-card-title{
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
     p {
         display: -webkit-box;
         -webkit-box-orient: vertical;
