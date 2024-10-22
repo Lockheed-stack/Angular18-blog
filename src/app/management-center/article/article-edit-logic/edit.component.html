@@ -1,5 +1,5 @@
 <mat-stepper linear #stepper (selectedIndexChange)="onInputChanged('stepper',$event)" class="wrapper">
-    <mat-step>
+    <mat-step [stepControl]="updatingForm">
         <ng-template matStepLabel>基本信息</ng-template>
         <div class="edit">
             <form [formGroup]="updatingForm">
@@ -33,8 +33,13 @@
                             @case ('category') {
                             <mat-select [formControlName]="item.formControlName"
                                 (selectionChange)="onInputChanged(item.formControlName,$event)">
-                                @for (item of categoryName; track item) {
-                                <mat-option [value]="item">{{item}}</mat-option>
+                                @if (categoryInfo.length===0) {
+                                    <mat-option value="null" disabled="true">{{categoryErrMsg}}</mat-option>
+                                }@else {
+
+                                    @for (item of categoryInfo; track item) {
+                                        <mat-option [value]="item.ID">{{item.Name}}</mat-option>
+                                    }
                                 }
                             </mat-select>
                             }
@@ -42,11 +47,9 @@
 
                             <input matInput [formControlName]="item.formControlName"
                                 (input)="onInputChanged(item.formControlName,$event)">
-
                             }
                             }
-                            @if (updatingForm.get(item.formControlName).invalid &&
-                            updatingForm.get(item.formControlName).touched) {
+                            @if (updatingForm.get(item.formControlName).invalid) {
                             <mat-error>{{onInputInvalid(item.formControlName)}}</mat-error>
                             }
                             @if (item.formControlName === 'desc') {
@@ -111,7 +114,7 @@
                 </div>
                 <div class="preview">
                     <app-edit-markdown (loaded)="onMarkdownLoaded($event)" [data]="BlogMarkdownData"
-                        [mode]="schema"></app-edit-markdown>
+                        [mode]="schema" [url]="blogInfo.Content"></app-edit-markdown>
                 </div>
             </div>
             }

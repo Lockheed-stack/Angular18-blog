@@ -14,7 +14,7 @@ import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 import { SnackBarComponent } from '../../shared/snack-bar/snack-bar.component';
 import { UploadImgComponent } from '../../shared/uploads/upload-img/upload-img.component';
 import { Subscription } from 'rxjs';
-import {UserInfo} from '../../services/user.service'
+import { UserInfo, UserService } from '../../services/user.service'
 import { GlobalService } from '../../services/global.service';
 
 interface EditableFieldConfig {
@@ -50,6 +50,7 @@ export class UserComponent implements OnInit, OnDestroy {
   snackbarRef: MatSnackBarRef<SnackBarComponent>;
 
   readonly globalService = inject(GlobalService);
+  readonly userService = inject(UserService)
   userInfo: UserInfo = {
     ID: -1,
     Avatar: this.globalService.avatarPlaceholder,
@@ -121,7 +122,7 @@ export class UserComponent implements OnInit, OnDestroy {
       case "email":
         return "邮箱格式错误";
       default:
-          return ""
+        return ""
     }
   }
 
@@ -163,29 +164,62 @@ export class UserComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // get userinfo
-    this.userInfo.Avatar = window.sessionStorage.getItem("avatar");
-    this.userInfo.ID = Number(window.sessionStorage.getItem("UID"));
-    this.userInfo.Username = window.sessionStorage.getItem("username");
-    this.userInfoBackup = {...this.userInfo};
+
     // form control
     this.updatingForm = new FormGroup({
-      "nickname": new FormControl(null,[Validators.maxLength(20)]),
-      "desc": new FormControl(null,[Validators.maxLength(150)]),
+      "nickname": new FormControl(null, [Validators.maxLength(20)]),
+      "desc": new FormControl(null, [Validators.maxLength(150)]),
       "location": new FormControl(),
       "email": new FormControl(null, [Validators.email]),
       "github": new FormControl(),
       "avatar": new FormControl()
     })
-    const setDefaultValue={
-      nickname: this.userInfo.Username,
-      desc:this.userInfo.SelfDesc,
-      location:this.userInfo.Location,
-      email:this.userInfo.Email,
-      github:this.userInfo.Github,
-      avatar:this.userInfo.Avatar
-    }
-    this.updatingForm.setValue(setDefaultValue);
+
+    // get userinfo
+    this.userInfo.Avatar = window.sessionStorage.getItem("avatar");
+    this.userInfo.ID = Number(window.sessionStorage.getItem("UID"));
+    this.userInfo.Username = window.sessionStorage.getItem("username");
+    this.userService.GetPublicUsersInfo([this.userInfo.ID]).subscribe({
+      next: (value) => {
+        if (value.result !== null) {
+          this.userInfo.SelfDesc = value.result[0].SelfDesc === undefined ? this.userInfo.SelfDesc : value.result[0].SelfDesc;
+          this.userInfo.Email = value.result[0].Email === undefined ? this.userInfo.Email : value.result[0].Email;
+          this.userInfo.Github = value.result[0].Github === undefined ? this.userInfo.Github : value.result[0].Github;
+          this.userInfo.Location = value.result[0].Location === undefined ? this.userInfo.Location : value.result[0].Location;
+
+          // set formcontrol default value
+          const setDefaultValue = {
+            nickname: this.userInfo.Username,
+            desc: this.userInfo.SelfDesc,
+            location: this.userInfo.Location,
+            email: this.userInfo.Email,
+            github: this.userInfo.Github,
+            avatar: this.userInfo.Avatar
+          }
+          this.updatingForm.setValue(setDefaultValue);
+
+          // backup userinfo
+          this.userInfoBackup = { ...this.userInfo };
+        } else {
+          this.snackbar.openFromComponent(SnackBarComponent, {
+            data: {
+              content: "无法获取用户信息！"
+            },
+            duration: 8000
+          })
+        }
+      },
+      error: () => {
+        this.snackbar.openFromComponent(SnackBarComponent, {
+          data: {
+            content: `出现错误，无法获取用户信息！`
+          },
+          duration: 8000
+        })
+      },
+    })
+
+
   }
   ngOnDestroy(): void {
     this.subscription.unsubscribe();

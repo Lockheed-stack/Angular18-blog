@@ -20,7 +20,9 @@ import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-d
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackBarComponent } from '../../../shared/snack-bar/snack-bar.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
-import { ArticleInfo } from '../../../services/articles.service';
+import { ArticleInfo, ArticlesService } from '../../../services/articles.service';
+import { CategoryInfo, CategoryService } from '../../../services/category.service';
+import { HttpErrorResponse } from '@angular/common/http';
 interface EditableFieldConfig {
   lines: number,
   icon: string,
@@ -60,6 +62,8 @@ export class EditComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
+    private categoryService:CategoryService,
+    private articleService:ArticlesService,
   ) { }
   subscription: Subscription = new Subscription();
   // interactive relate various
@@ -77,20 +81,8 @@ export class EditComponent implements OnInit, OnDestroy {
   // info relate various
   @Input() schema: Add_or_Update = Add_or_Update.none;
   @Input() blogInfo: ArticleInfo = null;
-  categoryName: string[] = [
-    "Ne pro case",
-    "possim dolorum.",
-    "Ne consul ubique",
-    "aperiri quo.",
-    "Et eum commodo facilis.Rebum",
-    "每次组件输入发生变化时运行。",
-    "ei pro",
-    "porro verear",
-    "malorum qui cu",
-    "eum ad purto",
-    "possit aliquid."
-  ];
-
+  categoryInfo: Array<CategoryInfo> = [];
+  categoryErrMsg:string = "加载中...";
   // input and form relate various
   EditableFields: Array<EditableFieldConfig> = [
     { lines: 4, icon: "title", label: "文章标题", formControlName: "title" },
@@ -172,9 +164,11 @@ export class EditComponent implements OnInit, OnDestroy {
   onInputInvalid(formControlName: string) {
     switch (formControlName) {
       case "title":
-        return "标题长度不超过 20 个字符";
+        return "必填项。标题长度不超过 20 个字符";
       case "desc":
         return "最大长度 150 个字符";
+      case "category":
+        return "必填项。"
       default:
         return ""
     }
@@ -218,12 +212,21 @@ export class EditComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     this.updatingForm = new FormGroup({
-      "title": new FormControl(null, [Validators.maxLength(20)]),
-      "category": new FormControl(),
+      "title": new FormControl(null, [Validators.maxLength(20),Validators.required]),
+      "category": new FormControl(null,[Validators.required]),
       "desc": new FormControl(null, [Validators.maxLength(100)]),
       "cover": new FormControl()
     })
 
+    this.categoryService.GetAllCategory().subscribe({
+      next: (value) => {
+        this.categoryInfo = value;
+      },
+      error:(err)=>{
+        const e = (err as HttpErrorResponse).message;
+        this.categoryErrMsg = `出现错误：${e}`;
+      }
+    })
     // the user wants to update a blog
     if (this.schema === Add_or_Update.update && this.blogInfo !== null) {
       // init the form's value
@@ -234,11 +237,9 @@ export class EditComponent implements OnInit, OnDestroy {
         cover: ""
       };
       setDefaultValue.title = this.blogInfo.Title;
-      this.subscription = this.route.queryParams.subscribe((val) => {
-        setDefaultValue.category = val['category'];
-      })
       setDefaultValue.desc = this.blogInfo.Desc;
       setDefaultValue.cover = this.blogInfo.Img === undefined ? "" : this.blogInfo.Img;
+      
       this.updatingForm.setValue(setDefaultValue);
     }else if(this.schema === Add_or_Update.add){
       this.blogInfo = {

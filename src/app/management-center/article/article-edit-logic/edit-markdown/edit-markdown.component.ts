@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MarkdownModule, KatexOptions } from 'ngx-markdown';
 import hljs from 'highlight.js/lib/common';
@@ -23,11 +23,12 @@ export class EditMarkdownComponent implements OnInit {
   @Output() loaded: EventEmitter<string> = new EventEmitter<string>;
   @Input() data: string = "";
   @Input() mode: number = 0; // 0: add a blog; 1: update a blog
+  @Input() url: string = "";
   firstRender: boolean = true;
   katexOpt: KatexOptions = {
     throwOnError: false,
-    output:"mathml",
-    displayMode:true
+    output: "mathml",
+    displayMode: true
   }
 
   onReady() {
@@ -40,12 +41,19 @@ export class EditMarkdownComponent implements OnInit {
   }
   ngOnInit(): void {
     if (this.mode === 1) { // fetch the original blog
-      this.http.get("http://cdn.lee-marcus.one/GO%20slice%20-%20upload.md", {
+      this.http.get(this.url, {
         responseType: "text",
       }).subscribe(
         {
           next: (val) => {
             this.data = val;
+          },
+          error: (err) => {
+            const e = (err as HttpErrorResponse).message;
+            this.data = 
+            `# 无法获取文章
+            ## 出现错误：${e}
+            `;
           }
         }
       )

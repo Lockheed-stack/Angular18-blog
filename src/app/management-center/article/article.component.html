@@ -1,10 +1,10 @@
 <div class="layout">
     <div class="category">
         <mat-grid-list cols="5" rowHeight="50px" gutterSize="5px" id="category-grid">
-            @for (name of categoryName; track name;let idx = $index) {
+            @for (item of categoryInfo; track item.ID) {
             <mat-grid-tile colspan="1" rowspan="1">
-                <div class="container" [title]="name">
-                    <button mat-flat-button (click)="onCategoryClicked(idx)"> {{name}} </button>
+                <div class="container" [title]="item.Name">
+                    <button mat-flat-button (click)="onCategoryClicked(item.ID,item.Name)"> {{item.Name}} </button>
                 </div>
             </mat-grid-tile>
             }
@@ -14,22 +14,22 @@
         <div class="chosenItem">
             <div class="word-bg"></div>
             <div class="word">
-                {{selectedItem}}
+                {{selectedCategoryItem}}
             </div>
         </div>
     </div>
-    <mat-grid-list cols="5" rowHeight="200px" gutterSize="10px">
+    <mat-grid-list cols="8" rowHeight="250px" gutterSize="10px">
         @for (item of blogs; track (item.ID);) {
-        <mat-grid-tile colspan="1" rowspan="1">
+        <mat-grid-tile colspan="2" rowspan="1">
             <mat-card>
                 <mat-card-header>
-                    <mat-card-title-group>
-                        <mat-card-title>{{item.Title}}</mat-card-title>
-                        <mat-card-subtitle>{{item.CreatedAt}}</mat-card-subtitle>
-                        <img mat-card-sm-image src="https://material.angular.io/assets/img/examples/shiba2.jpg">
-                    </mat-card-title-group>
+                    <mat-card-title [title]="item.Title">
+                        {{item.Title}}
+                    </mat-card-title>
+                    <mat-card-subtitle>{{item.CreatedAt|date: "y MMM d"}}</mat-card-subtitle>
                 </mat-card-header>
-                <mat-card-content>
+                <img mat-card-image [src]="item.Img" style="height: 80px; object-fit: cover;">
+                <mat-card-content [title]="item.Desc">
                     {{item.Desc}}
                 </mat-card-content>
                 <mat-card-actions>
@@ -39,7 +39,7 @@
                         <mat-icon>delete</mat-icon>
                         删除
                     </button>
-                  </mat-card-actions>
+                </mat-card-actions>
             </mat-card>
         </mat-grid-tile>
         }

@@ -53,6 +53,18 @@ export class ArticlesService {
       }
     )
   }
+  GetArticleListByCidAndUid(cid:number,uid:number,pageSize:number,pageNum:number){
+    const url = this.domain.domain + `gateway/${uid}/list/${cid}`;
+    return this.http.get<{result:Array<ArticleInfo>,total?:number}>(
+      url,
+      {
+        params:{
+          PageSize: pageSize,
+          PageNum: pageNum
+        }
+      }
+    )
+  }
   GetArticlesForRecommend(pageSize: number, pageNum: number) {
     const url = this.domain.domain + `gateway/recommendBlogs`;
     return this.http.get<{ result: Array<ArticleInfo> }>(
