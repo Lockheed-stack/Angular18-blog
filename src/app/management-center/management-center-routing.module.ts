@@ -7,6 +7,7 @@ import { ArticleComponent } from './article/article.component';
 import { ArticleWriteComponent } from './article/article-write/write.component';
 import { ArticleModifyComponent } from './article/article-modify/modify.component';
 import { CategoryComponent } from './category/category.component';
+import { CategoryAddComponent } from './category/category-add/category-add.component';
 
 const routes: Routes = [
   {path:"",component:ManagementCenterComponent,children:[
@@ -15,7 +16,8 @@ const routes: Routes = [
     {path:"allArticle",component:ArticleComponent},
     {path:"WriteArticle",component:ArticleWriteComponent},
     {path:"ModifyBlog",component:ArticleModifyComponent},
-    {path:"allCategory",component:CategoryComponent}
+    {path:"allCategory",component:CategoryComponent},
+    {path:"addCategory",component:CategoryAddComponent}
   ]}
 ];
 

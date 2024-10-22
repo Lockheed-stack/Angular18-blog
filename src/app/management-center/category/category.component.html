@@ -1,1 +1,37 @@
-<p>category works!</p>
+<div style="padding: 30px;">
+    <section class="mat-elevation-z8 table-container">
+        @if (isLoadingResults) {
+        <div class="loading-shade">
+            <mat-spinner></mat-spinner>
+        </div>
+        }
+        <table mat-table [dataSource]="dataSource">
+            <!-- Position Column -->
+            <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef> No. </th>
+                <td mat-cell *matCellDef="let element"> {{element.info.ID}} </td>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> 分类名 </th>
+                <td mat-cell *matCellDef="let element"> {{element.info.Name}} </td>
+            </ng-container>
+
+            <!-- Weight Column -->
+            <ng-container matColumnDef="opt">
+                <th mat-header-cell *matHeaderCellDef> 操作 </th>
+                <td mat-cell *matCellDef="let element">
+                    <button mat-button color="warn">
+                        {{element.opt}}
+                    </button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns;sticky:true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    </section>
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]">
+    </mat-paginator>
+</div>
