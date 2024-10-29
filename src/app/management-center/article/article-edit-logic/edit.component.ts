@@ -246,7 +246,7 @@ export class EditComponent implements OnInit, OnDestroy {
               {
                 next: (value) => {
                   if (value.result === "OK") {
-                    this.snackBarTips("更新成功");
+                    this.snackBarTips("文章添加成功");
                   } else {
                     this.snackBarTips(value.result.toString());
                   }

@@ -126,7 +126,8 @@ export class ArticlesService {
     )
   }
   AddArticle(blog: ArticleInfo) {
-    const url = this.domain.domain;
+    const username = window.sessionStorage.getItem("username");
+    const url = this.domain.domain+ `management/${username}/add-blog`;
     const data = new FormData();
     for (const key in blog) {
       if (Object.prototype.hasOwnProperty.call(blog, key)) {
