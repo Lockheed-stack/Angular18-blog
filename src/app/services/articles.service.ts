@@ -122,7 +122,7 @@ export class ArticlesService {
     }
     return this.http.patch<{ result: String }>(
       url,
-      blog,
+      data,
     )
   }
   AddArticle(blog: ArticleInfo) {
