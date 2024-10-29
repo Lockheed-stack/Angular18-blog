@@ -12,7 +12,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 import { SnackBarComponent } from '../../shared/snack-bar/snack-bar.component';
-import { UploadImgComponent } from '../../shared/uploads/upload-img/upload-img.component';
+import { UploadImgComponent, UploadImgStruct } from '../../shared/uploads/upload-img/upload-img.component';
 import { Subscription } from 'rxjs';
 import { UserInfo, UserService } from '../../services/user.service'
 import { GlobalService } from '../../services/global.service';
@@ -80,34 +80,42 @@ export class UserComponent implements OnInit, OnDestroy {
     this.userInfo = { ...this.userInfoBackup }
   }
 
-  onInputChanged(field: string, event: Event | string) {
-    if (event instanceof Event) {
-      var val = (<HTMLInputElement>event.target).value;
-    } else {
-      val = event;
-    }
+  onInputChanged(field: string, event: Event | string | UploadImgStruct) {
+
     switch (field) {
       case "nickname": {
+        const e = (event as Event);
+        const val = (<HTMLInputElement>e.target).value;
         this.userInfo.Username = val;
         break;
       }
       case "email": {
+        const e = (event as Event);
+        const val = (<HTMLInputElement>e.target).value;
         this.userInfo.Email = val;
         break;
       }
       case "github": {
+        const e = (event as Event);
+        const val = (<HTMLInputElement>e.target).value;
         this.userInfo.Github = val;
         break;
       }
       case "location": {
+        const e = (event as Event);
+        const val = (<HTMLInputElement>e.target).value;
         this.userInfo.Location = val;
         break;
       }
       case "desc": {
+        const e = (event as Event);
+        const val = (<HTMLInputElement>e.target).value;
         this.userInfo.SelfDesc = val;
         break;
       }
       case "avatar": {
+        const e = (event as UploadImgStruct)
+        const val = e.file_base64;
         this.userInfo.Avatar = val;
       }
     }

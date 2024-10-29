@@ -9,7 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgIconComponent } from '@ng-icons/core';
 import { Subscription } from 'rxjs';
 
-import { UploadImgComponent } from '../../../shared/uploads/upload-img/upload-img.component';
+import { UploadImgComponent, UploadImgStruct } from '../../../shared/uploads/upload-img/upload-img.component';
 import { MatStepperModule } from '@angular/material/stepper';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
@@ -19,10 +19,11 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackBarComponent } from '../../../shared/snack-bar/snack-bar.component';
-import {MatTooltipModule} from '@angular/material/tooltip';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ArticleInfo, ArticlesService } from '../../../services/articles.service';
 import { CategoryInfo, CategoryService } from '../../../services/category.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { GlobalService } from '../../../services/global.service';
 interface EditableFieldConfig {
   lines: number,
   icon: string,
@@ -62,15 +63,18 @@ export class EditComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private categoryService:CategoryService,
-    private articleService:ArticlesService,
-  ) { }
+    private categoryService: CategoryService,
+    private articleService: ArticlesService,
+    private globalService: GlobalService,
+  ) {
+    this.BlogCoverPlaceHolder = this.globalService.imagePlaceholder;
+  }
   subscription: Subscription = new Subscription();
   // interactive relate various
   readonly dialog = inject(MatDialog);
   private dialogRef: MatDialogRef<ConfirmDialogComponent>;
   readonly snackbar = inject(MatSnackBar);
-  tooltips:string = `
+  tooltips: string = `
   功能有限，完善中。注意事项：
 
   1. 对于 inline 元素，如普通文本，换行需要 2 次回车。
@@ -81,8 +85,9 @@ export class EditComponent implements OnInit, OnDestroy {
   // info relate various
   @Input() schema: Add_or_Update = Add_or_Update.none;
   @Input() blogInfo: ArticleInfo = null;
+  img_blob: Blob = null;
   categoryInfo: Array<CategoryInfo> = [];
-  categoryErrMsg:string = "加载中...";
+  categoryErrMsg: string = "加载中...";
   // input and form relate various
   EditableFields: Array<EditableFieldConfig> = [
     { lines: 4, icon: "title", label: "文章标题", formControlName: "title" },
@@ -91,6 +96,7 @@ export class EditComponent implements OnInit, OnDestroy {
     { lines: 4, icon: "cloud_upload", label: "文章封面", formControlName: "cover" },
   ]
   EditMode: number = 1;
+  BlogCoverPlaceHolder: string;
   BlogMarkdownData: string = "";
   updatingForm: FormGroup;
   markdownTextArea: HTMLTextAreaElement = null;
@@ -109,21 +115,11 @@ export class EditComponent implements OnInit, OnDestroy {
   };
 
   // handle input event
-  onInputChanged(field: string, event: Event | string | number | MatSelectChange | MatRadioChange) {
-    var val = null;
-    if (event instanceof Event) {
-      val = (<HTMLInputElement>event.target).value;
-    } else if (event instanceof MatSelectChange) {
-      val = event.value;
-    } else if (event instanceof MatRadioChange) {
-      val = event.value;
-    } else if (typeof event === "string") {
-      val = event;
-    } else if (typeof event === "number") {
-      val = event;
-    }
+  onInputChanged(field: string, event: Event | string | number | MatSelectChange | MatRadioChange | UploadImgStruct) {
     switch (field) {
       case "title": {
+        const e = (event as Event);
+        const val = (<HTMLInputElement>e.target).value;
         this.blogInfo.Title = val;
         break;
       }
@@ -132,11 +128,15 @@ export class EditComponent implements OnInit, OnDestroy {
         break;
       }
       case "desc": {
+        const e = (event as Event);
+        const val = (<HTMLInputElement>e.target).value;
         this.blogInfo.Desc = val;
         break;
       }
       case "cover": {
-        this.blogInfo.Img = val;
+        const val = (event as UploadImgStruct);
+        this.blogInfo.Img = val.file_base64;
+        this.img_blob = val.file_blob;
         break;
       }
       case "url": {
@@ -148,10 +148,13 @@ export class EditComponent implements OnInit, OnDestroy {
         break;
       }
       case "write": {
+        const e = (event as Event);
+        const val = (<HTMLInputElement>e.target).value;
         this.BlogMarkdownData = val;
         break;
       }
       case "stepper": {
+        const val = (event as number);
         if (val === 2 && this.EditMode === 2) {
           // support tab indent
           this.markdownTextArea = document.getElementById("writeMarkdown") as HTMLTextAreaElement;
@@ -177,7 +180,13 @@ export class EditComponent implements OnInit, OnDestroy {
   onMarkdownLoaded(val: string) {
     this.BlogMarkdownData = val;
   }
-
+  snackBarTips(content: string) {
+    this.snackbar.openFromComponent(SnackBarComponent, {
+      data: {
+        content: content
+      }
+    })
+  }
   onSubmitBtnClick() {
     this.dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
@@ -185,25 +194,72 @@ export class EditComponent implements OnInit, OnDestroy {
         content: "是否提交更新信息?"
       }
     })
+
     this.subscription.add(
       this.dialogRef.afterClosed().subscribe(() => {
         if (this.dialogRef.componentInstance.is_yes) {
-          // execute updating logic
           this.disableSubmitBtn = true;
-          this.snackbar.openFromComponent(SnackBarComponent, {
-            data: {
-              content: "正在处理更新请求..."
-            }
-          })
-          // async callback function of processing result
-          setTimeout(() => {
-            this.snackbar.openFromComponent(SnackBarComponent, {
-              data: {
-                content: "更新成功"
-              }
+          // processing article info
+          const blog: ArticleInfo = {
+            Title: this.updatingForm.get("title").value,
+            Desc: this.updatingForm.get("desc").value,
+            Cid: this.updatingForm.get("category").value,
+            ID: this.blogInfo.ID
+          }
+          if (this.img_blob !== null) {
+            blog.Img_blob = this.img_blob;
+          } else {
+            blog.Img = this.updatingForm.get("cover").value;
+          }
+          if (this.EditMode === 1) {
+            blog.Content = this.updatingForm.get("content").value
+          } else {
+            const content_blob = new Blob([this.BlogMarkdownData], {
+              type: "text/plain"
             })
-            this.disableSubmitBtn = false;
-          }, 1500);
+            blog.Content_blob = content_blob;
+          }
+          if (this.schema === Add_or_Update.update) {// execute updating logic
+            this.snackBarTips("正在处理更新请求...");
+            // async callback function of processing result
+            this.articleService.UpdateArticle(blog).subscribe(
+              {
+                next: (value) => {
+                  if (value.result === "OK") {
+                    this.snackBarTips("更新成功");
+                  } else {
+                    this.snackBarTips(value.result.toString());
+                  }
+                  this.disableSubmitBtn = false;
+                },
+                error: (err) => {
+                  const e = (err as HttpErrorResponse).message;
+                  this.snackBarTips(`出现错误: ${e}`);
+                  this.disableSubmitBtn = false;
+                },
+              }
+            )
+          } else if (this.schema === Add_or_Update.add) {// execute adding logic
+            this.snackBarTips("正在处理添加文章请求...");
+            // async callback function of processing result
+            this.articleService.AddArticle(blog).subscribe(
+              {
+                next: (value) => {
+                  if (value.result === "OK") {
+                    this.snackBarTips("更新成功");
+                  } else {
+                    this.snackBarTips(value.result.toString());
+                  }
+                  this.disableSubmitBtn = false;
+                },
+                error: (err) => {
+                  const e = (err as HttpErrorResponse).message;
+                  this.snackBarTips(`出现错误: ${e}`);
+                  this.disableSubmitBtn = false;
+                },
+              }
+            )
+          }
         }
       })
     )
@@ -212,17 +268,18 @@ export class EditComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     this.updatingForm = new FormGroup({
-      "title": new FormControl(null, [Validators.maxLength(20),Validators.required]),
-      "category": new FormControl(null,[Validators.required]),
+      "title": new FormControl(null, [Validators.maxLength(20), Validators.required]),
+      "category": new FormControl(null, [Validators.required]),
       "desc": new FormControl(null, [Validators.maxLength(100)]),
-      "cover": new FormControl()
+      "cover": new FormControl(),
+      "content": new FormControl(null,)
     })
 
     this.categoryService.GetAllCategory().subscribe({
       next: (value) => {
         this.categoryInfo = value;
       },
-      error:(err)=>{
+      error: (err) => {
         const e = (err as HttpErrorResponse).message;
         this.categoryErrMsg = `出现错误：${e}`;
       }
@@ -234,20 +291,23 @@ export class EditComponent implements OnInit, OnDestroy {
         title: "",
         category: "",
         desc: "",
-        cover: ""
+        cover: "",
+        content: ""
       };
       setDefaultValue.title = this.blogInfo.Title;
       setDefaultValue.desc = this.blogInfo.Desc;
-      setDefaultValue.cover = this.blogInfo.Img === undefined ? "" : this.blogInfo.Img;
-      
+      setDefaultValue.cover = this.blogInfo.Img === undefined ? this.BlogCoverPlaceHolder : this.blogInfo.Img;
+      setDefaultValue.content = this.blogInfo.Content;
+
       this.updatingForm.setValue(setDefaultValue);
-    }else if(this.schema === Add_or_Update.add){
+    } else if (this.schema === Add_or_Update.add) {
       this.blogInfo = {
-        Title:"",
-        Desc:"",
-        Content:"",
+        Title: "",
+        Desc: "",
+        Content: "",
+        Img: this.BlogCoverPlaceHolder,
       }
-    }else {// but user offer a blog info that we don't need
+    } else {// but user offer a blog info that we don't need
       this.router.navigate(['allArticle'], { relativeTo: this.route.parent });
     }
 

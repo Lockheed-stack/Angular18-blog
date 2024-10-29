@@ -4,7 +4,7 @@ import { GlobalService } from '../services/global.service';
 
 export const authInterceptorInterceptor: HttpInterceptorFn = (req, next) => {
   const globalService = inject(GlobalService);
-  if (req.method === "POST") {
+  if (req.method === "POST" || req.method === "PATCH") {
     const splited = req.url.split("/");
 
     if (splited[3] === "management") {

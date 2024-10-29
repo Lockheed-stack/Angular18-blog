@@ -18,7 +18,7 @@
                                 style="margin-left: 20px; max-width: 100px; max-height: 100px;">
                             }@else {
                             <img style="margin-left: 20px; max-width: 100px; max-height: 100px;"
-                                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAAXNSR0IArs4c6QAAA6VJREFUeF7tm21LMmEUhI+VlaWWghqGQer//yV+74vZBy18AU00LRV9mIWVkop6UpyzzAEpSHbHuZz75dxbrFarrUxF40BMQGhYBEIEhIuHgJDxEBABYXOATI/mEAEhc4BMjhIiIGQOkMlRQgSEzAEyOUqIgJA5QCZHCREQMgfI5CghAkLmAJkcJURAyBwgk6OECAiZA2RylBABIXOATI4SIiBkDpDJUUIEhMwBMjlKiID83YHT01PLZrOWTCbt5OTEDg8PbbVa2dvbm00mExsMBjYajf5+oz1cwVVCLi4u7Orqys7Pzy0Wi31r13g8tlarZS8vL3uw9f9v6QZIOp2229tbOzo6+vGnnc/n1mw2g8R4KTdAkA4AwfCEWi6X9vr6atPpNPj97OzMEomEHRwcfPAef6/X6zabzVwwcQcEc0Wv17Nut2uLxeKDycfHx1YqlQzwwiEN7398fLROpyMg23QAJufz+cBcTNxfFRJSrVYtlUqt3/L8/Gz39/fblLOza7lJCIzGazMVnzmDib9YLK5TAoB3d3c7M3GbF3YD5DcfGkm6vr5ezycC8hv3dvDezYRgldVoNHZwp+1fMnIJwbBWqVQMy2SUJvXtf2l+dcVCoRDMH+HyF0tjTOj46aEilZBMJmM3NzfrzSP2J09PT26WvPjCRAbI5eVlACMej6+HKuxXsFP3VJEAgmRgQ7gJA3sWpMRTuQcSJRjuhyx0fdHfQgs+XFF5HKbeJ9h1QsrlsiEhYaFF8vDw4G6YigQQ9KqQjnDe8NbV/Wpec5uQzfYIurk4kPJeboGgV4UWCQorKayo0JL3Xm6BvE8I2iPtdjvYBHovt0DwkAM2guEJoqczj+++NG6B4MkT9KxwSojCES2GLTx54rncAvFseiQTIiBRdYDsc7kesjCP5HK5oHXS7/eDl/dyCwQw0DrBs1hhHwv7EO+bQ7dAcDKIzeH7R0qj0D5xC2SzdYKUCMgeB2zsP9BcxBPwYfvE23HtZ/a5TQg+DB68xtEt5pPhcOj2XxAi0X7fYzh3emvXCdmpM3u6uIDsyfivbisgAkLmAJkcJURAyBwgk6OECAiZA2RylBABIXOATI4SIiBkDpDJUUIEhMwBMjlKiICQOUAmRwkREDIHyOQoIQJC5gCZHCVEQMgcIJOjhAgImQNkcpQQASFzgEyOEiIgZA6QyVFCBITMATI5SoiAkDlAJkcJERAyB8jkKCECQuYAmRwlREDIHCCT8w9W7m0vbzV05gAAAABJRU5ErkJggg=="
+                                [src]="BlogCoverPlaceHolder"
                                 alt="">
                             }
                         </div>
@@ -36,7 +36,6 @@
                                 @if (categoryInfo.length===0) {
                                     <mat-option value="null" disabled="true">{{categoryErrMsg}}</mat-option>
                                 }@else {
-
                                     @for (item of categoryInfo; track item) {
                                         <mat-option [value]="item.ID">{{item.Name}}</mat-option>
                                     }
@@ -44,7 +43,6 @@
                             </mat-select>
                             }
                             @default {
-
                             <input matInput [formControlName]="item.formControlName"
                                 (input)="onInputChanged(item.formControlName,$event)">
                             }
@@ -92,11 +90,11 @@
         <ng-template matStepLabel>修改</ng-template>
         <div class="edit_blog">
             @if (EditMode === 1) {
-            <form>
-                <mat-form-field>
+            <form style="width: 100%;" [formGroup]="updatingForm">
+                <mat-form-field style="width: 100%;">
                     <mat-icon matPrefix>link</mat-icon>
                     <mat-label>输入 Markdown URL</mat-label>
-                    <input matInput type="url">
+                    <input matInput type="url" formControlName="content">
                 </mat-form-field>
             </form>
             }@else {

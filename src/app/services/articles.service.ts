@@ -9,9 +9,11 @@ export interface ArticleInfo {
   UpdatedAt?: string,
   Title: string,
   Desc: string,
-  Content: string,
+  Content?: string,
+  Content_blob?: Blob,
   PageView?: number
   Img?: string,
+  Img_blob?: Blob,
   ID?: number,
   Uid?: number,
   Cid?: number,
@@ -53,12 +55,12 @@ export class ArticlesService {
       }
     )
   }
-  GetArticleListByCidAndUid(cid:number,uid:number,pageSize:number,pageNum:number){
+  GetArticleListByCidAndUid(cid: number, uid: number, pageSize: number, pageNum: number) {
     const url = this.domain.domain + `gateway/${uid}/list/${cid}`;
-    return this.http.get<{result:Array<ArticleInfo>,total?:number}>(
+    return this.http.get<{ result: Array<ArticleInfo>, total?: number }>(
       url,
       {
-        params:{
+        params: {
           PageSize: pageSize,
           PageNum: pageNum
         }
@@ -106,5 +108,35 @@ export class ArticlesService {
   }
   SetPreparedBlog(blog: ArticleInfo) {
     PreparedBlog = blog;
+  }
+  // edit article
+  UpdateArticle(blog: ArticleInfo) {
+    const username = window.sessionStorage.getItem("username");
+    const url = this.domain.domain + `management/${username}/modify-blog`;
+    const data = new FormData();
+    for (const key in blog) {
+      if (Object.prototype.hasOwnProperty.call(blog, key)) {
+        const element = blog[key];
+        data.append(key, element);
+      }
+    }
+    return this.http.patch<{ result: String }>(
+      url,
+      blog,
+    )
+  }
+  AddArticle(blog: ArticleInfo) {
+    const url = this.domain.domain;
+    const data = new FormData();
+    for (const key in blog) {
+      if (Object.prototype.hasOwnProperty.call(blog, key)) {
+        const element = blog[key];
+        data.append(key, element);
+      }
+    }
+    return this.http.post<{ result: String }>(
+      url,
+      data
+    )
   }
 }
