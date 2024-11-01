@@ -85,7 +85,21 @@ export class BlogDisplayComponent implements OnInit, OnChanges {
       }
     })
   }
-
+  getAuthorInfo(usersID:Array<number>){
+    this.userService.GetPublicUsersInfo(usersID).subscribe({
+      next: (val_userinfo) => {
+        if (val_userinfo!==null){
+          this.userInfo = val_userinfo.result[0];
+        }else{
+          this.userInfo.Username = "获取文章作者信息失败";  
+        }
+      },
+      error: (err_userinfo) => {
+        this.snackBarTips("获取文章作者信息失败");
+        this.userInfo.Username = "获取文章作者信息失败";
+      }
+    })
+  }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((value) => {
@@ -102,20 +116,8 @@ export class BlogDisplayComponent implements OnInit, OnChanges {
               this.articleService.SetPreparedBlog(this.blogInfo);
 
               // get article author public info
-              const usersID: Array<number> = [value.result.Uid]
-              this.userService.GetPublicUsersInfo(usersID).subscribe({
-                next: (val_userinfo) => {
-                  if (val_userinfo!==null){
-                    this.userInfo = val_userinfo.result[0];
-                  }else{
-                    this.userInfo.Username = "获取文章作者信息失败";  
-                  }
-                },
-                error: (err_userinfo) => {
-                  this.snackBarTips("获取文章作者信息失败");
-                  this.userInfo.Username = "获取文章作者信息失败";
-                }
-              })
+              const usersID: Array<number> = [value.result.Uid];
+              this.getAuthorInfo(usersID);
             },
             error: (err) => {
               this.snackBarTips("文章不存在");
@@ -123,6 +125,9 @@ export class BlogDisplayComponent implements OnInit, OnChanges {
           })
         } else {
           this.markdownURL = this.blogInfo.Content;
+          // get article author public info
+          const usersID: Array<number> = [this.blogInfo.Uid];
+          this.getAuthorInfo(usersID);
         }
       }
     })
