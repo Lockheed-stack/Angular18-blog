@@ -1,49 +1,56 @@
-$animationSpeed: 20s;
+$animationSpeed: 40s;
 
 // Animation
 @keyframes scroll {
-	0% { transform: translateX(0); }
-	100% { transform: translateX(-50%)}
+	0% {
+		transform: translateX(0);
+	}
+
+	100% {
+		transform: translateX(-50%)
+	}
 }
 
+.container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 3em 1em;
 
-// Styling
-.slider {
-	background: white;
-	box-shadow: 0 10px 20px -5px rgba(0, 0, 0, .125);
-	height: 100px;
-	margin: auto;
-	overflow:hidden;
-	position: relative;
-	width: 960px;
-	
-	.slide-track {
-		animation: scroll $animationSpeed linear infinite;
-		display: flex;
-		flex-wrap: nowrap;
-		justify-content: space-around;
-		min-width: 200%;
-		position: absolute;
+	p {
+		font-size: 5vmax;
+		line-height: 1;
+		font-weight: 900;
 	}
-	
-	.slide {
+
+	// Styling
+	.slider {
+		background: white;
+		box-shadow: 0 10px 20px -5px rgba(0, 0, 0, .125);
 		height: 100px;
-	}
-	
-	//pause on hover
-	&:hover {
+		margin: 0 2em 0;
+		overflow: hidden;
+		position: relative;
+		width: 60%;
+
 		.slide-track {
-			animation-play-state: paused;
+			animation: scroll $animationSpeed linear infinite;
+			display: flex;
+			flex-wrap: nowrap;
+			justify-content: space-around;
+			min-width: 200%;
+			position: absolute;
 		}
-	}
-	
-	//hover efffect
-	.slide {
-		filter: grayscale(100%);
-		transition: 300ms all linear;
-		
+
+		.slide {
+			height: 100px;
+		}
+
+		//pause on hover
 		&:hover {
-			filter: none;
+			.slide-track {
+				animation-play-state: paused;
+			}
 		}
 	}
 }

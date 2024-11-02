@@ -18,6 +18,7 @@ import { ArticleInfo, ArticlesService } from '../../services/articles.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { GlobalService } from '../../services/global.service';
+import { FooterComponent } from "../../shared/footer/footer.component";
 
 @Component({
   selector: 'app-index-layout',
@@ -38,9 +39,10 @@ import { GlobalService } from '../../services/global.service';
     NavBarComponent,
     IndexCarouselComponent,
     InfiniteCarouselComponent,
+    FooterComponent,
     // ng-zorro
     NzSkeletonModule,
-  ],
+],
   templateUrl: './index-layout.component.html',
   styleUrl: './index-layout.component.scss'
 })
