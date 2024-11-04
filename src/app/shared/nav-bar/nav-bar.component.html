@@ -9,14 +9,14 @@
     </button>
     <mat-menu #menu="matMenu" xPosition="before">
         <button mat-menu-item (click)="onManageBtnClicked()">
-          <mat-icon>manage_accounts</mat-icon>
-          <span>个人中心</span>
+            <mat-icon>manage_accounts</mat-icon>
+            <span>个人中心</span>
         </button>
         <button mat-menu-item (click)="onLogoutBtnClicked()">
-          <mat-icon>logout</mat-icon>
-          <span>退出登录</span>
+            <mat-icon>logout</mat-icon>
+            <span>退出登录</span>
         </button>
-      </mat-menu>
+    </mat-menu>
     }@else {
     <button mat-icon-button (click)="openLoginDialog()">
         <mat-icon>person</mat-icon>
@@ -24,10 +24,8 @@
     }
 
 
-    <button mat-icon-button>
-        <a routerLink="/">
-            <mat-icon>home</mat-icon>
-        </a>
+    <button mat-icon-button (click)="onHomeBtnClicked()">
+        <mat-icon>home</mat-icon>
     </button>
     <button mat-icon-button>
         <mat-icon>share</mat-icon>
