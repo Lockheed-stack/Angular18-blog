@@ -12,6 +12,7 @@ export class InfiniteCarouselComponent {
   poweredby:Array<{logo:string,site:string}> = [
     {logo:"https://s3-us-west-2.amazonaws.com/s.cdpn.io/557257/6.png",site:"https://google.com"},
     {logo:"https://angular.dev/assets/images/press-kit/angular_wordmark_gradient.png",site:"https://angular.dev"},
+    {logo:"https://indexnowvideos.azureedge.net/logos/24CloudFlare.png",site:"https://www.cloudflare-cn.com/"},
     {logo:"https://static.wikia.nocookie.net/logopedia/images/9/9a/Visual_Studio_Code_1.35_icon.svg/revision/latest?cb=20231105010051",site:"https://code.visualstudio.com"},
     {logo:"https://build5nines.com/wp-content/uploads/2022/07/microsoft-azure-logo-2018-text-980x181.jpg",site:"https://portal.azure.com"},
     {logo:"https://go-kratos.dev/img/logo.svg",site:"https://go-kratos.dev/docs/"},

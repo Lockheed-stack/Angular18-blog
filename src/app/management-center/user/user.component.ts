@@ -16,6 +16,7 @@ import { UploadImgComponent, UploadImgStruct } from '../../shared/uploads/upload
 import { Subscription } from 'rxjs';
 import { UserInfo, UserService } from '../../services/user.service'
 import { GlobalService } from '../../services/global.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 interface EditableFieldConfig {
   lines: number,
@@ -153,19 +154,45 @@ export class UserComponent implements OnInit, OnDestroy {
             duration: 8000
           })
           // logic of successful login
-          setTimeout(() => {
-            this.snackbarRef = this.snackbar.openFromComponent(SnackBarComponent, {
-              data: {
-                content: "更新成功!"
-              },
-              duration: 8000
-            })
-            this.subscription.add(
-              this.snackbarRef.afterDismissed().subscribe(() => {
-                this.submitBtnDisabled = false;
+          this.userService.UpdateUserPublicInfo(this.userInfo).subscribe({
+            next: (value) => {
+              if (value.result === "OK") {
+                this.snackbarRef = this.snackbar.openFromComponent(SnackBarComponent, {
+                  data: {
+                    content: "更新成功!"
+                  },
+                  duration: 8000
+                });
+                this.userInfoBackup = { ...this.userInfo };
+              } else {
+                this.snackbarRef = this.snackbar.openFromComponent(SnackBarComponent, {
+                  data: {
+                    content: `出现错误：${value.result}`
+                  },
+                  duration: 8000
+                })
+              }
+              this.subscription.add(
+                this.snackbarRef.afterDismissed().subscribe(() => {
+                  this.submitBtnDisabled = false;
+                })
+              )
+            },
+            error: (err) => {
+              const e = (err as HttpErrorResponse).message;
+              this.snackbarRef = this.snackbar.openFromComponent(SnackBarComponent, {
+                data: {
+                  content: `出现错误：${e}`
+                },
+                duration: 8000
               })
-            )
-          }, 2000);
+              this.subscription.add(
+                this.snackbarRef.afterDismissed().subscribe(() => {
+                  this.submitBtnDisabled = false;
+                })
+              )
+            }
+          })
         }
       })
     )

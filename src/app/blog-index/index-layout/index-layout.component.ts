@@ -32,11 +32,9 @@ import { FooterComponent } from "../../shared/footer/footer.component";
     MatButtonModule,
     // Angular component
     DecimalPipe,
-    RouterOutlet,
     NgStyle,
     // custom component
     MatProgressBarModule,
-    NavBarComponent,
     IndexCarouselComponent,
     InfiniteCarouselComponent,
     FooterComponent,

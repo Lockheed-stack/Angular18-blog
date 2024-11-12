@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -31,7 +30,6 @@ interface ListOptionContent {
     MatSidenavModule,
     MatListModule,
     MatIconModule,
-    AsyncPipe,
     RouterOutlet,
   ],
   templateUrl: './management-center.component.html',

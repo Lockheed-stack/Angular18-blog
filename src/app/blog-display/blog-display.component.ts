@@ -25,7 +25,6 @@ hljs.registerLanguage('dockerfile', hljs_dockerfile);
   selector: 'app-blog-display',
   standalone: true,
   imports: [
-    NavBarComponent,
     BlogMarkdownComponent,
     NzSkeletonModule,
     CdkDrag,
