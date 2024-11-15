@@ -17,6 +17,11 @@ export interface UserStatisticsInfo {
   TotalPageviews?: number,
   TotalUniqueviews?: number
 }
+export interface UserDayStatInfo {
+  CreatedAt: string,
+  Pv?: number,
+  Uv?: number,
+}
 
 
 @Injectable({
@@ -44,15 +49,21 @@ export class UserService {
       userInfo,
     )
   }
-  GetUserStatisticsInfo(){
+  GetUserTotalStatisticsInfo() {
     const url = this.globalService.domain + "management/user/statisticsInfo";
-    return this.http.get<{result:UserStatisticsInfo}>(
+    return this.http.get<{ result: UserStatisticsInfo }>(
       url,
     )
   }
-  GetUserTodayStatisticsInfo(){
+  GetUserTodayStatisticsInfo() {
     const url = this.globalService.domain + "management/user/todayStatistics";
-    return this.http.get<{result:UserStatisticsInfo}>(
+    return this.http.get<{ result: UserStatisticsInfo }>(
+      url,
+    )
+  }
+  GetUserSevenDaysStatisticsInfo() {
+    const url = this.globalService.domain + "management/stat/user/sevenDays";
+    return this.http.get<{ result: Array<UserDayStatInfo> }>(
       url,
     )
   }

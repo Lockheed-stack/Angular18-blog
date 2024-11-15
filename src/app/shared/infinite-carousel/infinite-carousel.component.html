@@ -1,22 +1,24 @@
 <div class="container">
 	<p>
-		Powered By 
+		Powered By
 	</p>
 	<div class="slider">
 		<div class="slide-track">
 			@for (item of poweredby; track $index) {
-				<div class="slide">
-					<a [href]="item.site" tabindex="-1" target="_blank">
-						<img [src]="item.logo" style="object-fit: scale-down;height: 100px;width: 250px;" alt="" />
-					</a>
-				</div>
+			<div class="slide">
+				<a [href]="item.site" tabindex="-1" target="_blank">
+					<img [ngSrc]="item.logo" width="250" height="100" style="object-fit: scale-down;" alt="" />
+					<!-- <img [src]="item.logo" style="object-fit: scale-down;height: 100px;width: 250px;" alt="" /> -->
+				</a>
+			</div>
 			}
 			@for (item of poweredby; track $index) {
-				<div class="slide">
-					<a [href]="item.site" tabindex="-1" target="_blank">
-						<img [src]="item.logo" style="object-fit: scale-down;height: 100px;width: 250px;" alt="" />
-					</a>
-				</div>
+			<div class="slide">
+				<a [href]="item.site" tabindex="-1" target="_blank">
+					<!-- <img [src]="item.logo" style="object-fit: scale-down;height: 100px;width: 250px;" alt="" /> -->
+					<img [ngSrc]="item.logo" width="250" height="100" style="object-fit: scale-down;" alt="" />
+				</a>
+			</div>
 			}
 		</div>
 	</div>

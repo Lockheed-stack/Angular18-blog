@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { InfiniteCarouselComponent } from "../../shared/infinite-carousel/infinite-carousel.component";
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { DecimalPipe, NgStyle } from '@angular/common';
@@ -7,10 +7,9 @@ import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { Router, RouterOutlet } from '@angular/router';
-import { NavBarComponent } from '../../shared/nav-bar/nav-bar.component';
+import { Router, } from '@angular/router';
 import { IndexCarouselComponent } from '../index-carousel/index-carousel.component';
-import { Observable, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 import { GetRefreshBtnOffsetTop, SetRefreshBtnOffsetTop } from '../blog-index.component';
 import { CategoryInfo, CategoryService } from '../../services/category.service';
@@ -40,7 +39,7 @@ import { FooterComponent } from "../../shared/footer/footer.component";
     FooterComponent,
     // ng-zorro
     NzSkeletonModule,
-],
+  ],
   templateUrl: './index-layout.component.html',
   styleUrl: './index-layout.component.scss'
 })
@@ -61,7 +60,7 @@ export class IndexLayoutComponent implements OnInit, OnDestroy {
   orientaion: number = 0;
   progressBarVal: number = 0;
   refreshBtnTop: string = "";
-  refreshBtnVisible:string = "hidden";
+  refreshBtnVisible: string = "hidden";
   destroyed = new Subject<void>();
   categoryBreakPoint: number = 8;
   blogAbstractBreakPoint: number = 9;

@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
-
+import { NgOptimizedImage } from '@angular/common'
 @Component({
   selector: 'app-infinite-carousel',
   standalone: true,
-  imports: [],
+  imports: [
+    NgOptimizedImage,
+  ],
   templateUrl: './infinite-carousel.component.html',
   styleUrl: './infinite-carousel.component.scss'
 })
