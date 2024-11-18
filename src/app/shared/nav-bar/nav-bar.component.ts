@@ -96,13 +96,13 @@ export class NavBarComponent implements OnInit, OnDestroy {
       } else {
         this.dialogCfg = {
           disableClose: true,
-          height: "540px",
+          // height: "540px",
           maxHeight: "780px",
           width: "980px",
           maxWidth: "980px",
         }
         if (this.loginDialogRef !== null && this.loginDialogRef.getState() === MatDialogState.OPEN) {
-          this.loginDialogRef = this.loginDialogRef.updateSize("980px","540px");
+          this.loginDialogRef = this.loginDialogRef.updateSize("980px",);
         }
       }
     });
