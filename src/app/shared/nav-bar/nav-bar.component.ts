@@ -3,13 +3,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatMenuModule } from '@angular/material/menu';
-import { NgIf } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
-import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
+import { Router, } from '@angular/router';
+import { MatDialog, MatDialogConfig, MatDialogRef, MatDialogState } from '@angular/material/dialog';
 import { LoginComponent } from '../login/login.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { DarkLightService } from '../../services/dark-light.service';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
@@ -17,9 +17,6 @@ import { DarkLightService } from '../../services/dark-light.service';
     MatIconModule,
     MatButtonModule,
     MatToolbarModule,
-    NgIf,
-    RouterLink,
-    LoginComponent,
     MatMenuModule
   ],
   templateUrl: './nav-bar.component.html',
@@ -29,6 +26,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private dark_light_srv: DarkLightService,
+    private breakpointServer: BreakpointObserver
   ) { }
   readonly dialog = inject(MatDialog);
   dialogCfg: MatDialogConfig = new MatDialogConfig();
@@ -37,7 +35,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
   subscription: Subscription = new Subscription();
   theme = "light_mode";
   avatarURL: string = "";
-
+  destroyed = new Subject<void>();
 
   toggleTheme() {
     const result = this.dark_light_srv.toggle_theme();
@@ -62,7 +60,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
   onManageBtnClicked() {
     this.router.navigate(['management']);
   }
-  onHomeBtnClicked(){
+  onHomeBtnClicked() {
     this.router.navigate(['/']);
   }
   onLogoutBtnClicked() {
@@ -79,13 +77,37 @@ export class NavBarComponent implements OnInit, OnDestroy {
     )
   }
   ngOnInit(): void {
-    this.dialogCfg = {
-      disableClose: true,
-      height: "540px",
-      maxHeight: "780px",
-      width: "980px",
-      maxWidth: "980px",
-    }
+    // UI display control
+    this.breakpointServer.observe([
+      Breakpoints.XSmall,
+      Breakpoints.Small,
+    ]).pipe(takeUntil(this.destroyed)).subscribe(result => {
+      if (result.matches) {
+        this.dialogCfg = {
+          disableClose: true,
+          height: "95%",
+          maxHeight: "780px",
+          width: "95%",
+          maxWidth: "980px",
+        }
+        if (this.loginDialogRef !== null && this.loginDialogRef.getState() === MatDialogState.OPEN) {
+          this.loginDialogRef = this.loginDialogRef.updateSize("95%", "95%");
+        }
+      } else {
+        this.dialogCfg = {
+          disableClose: true,
+          height: "540px",
+          maxHeight: "780px",
+          width: "980px",
+          maxWidth: "980px",
+        }
+        if (this.loginDialogRef !== null && this.loginDialogRef.getState() === MatDialogState.OPEN) {
+          this.loginDialogRef = this.loginDialogRef.updateSize("980px","540px");
+        }
+      }
+    });
+
+
     if (this.dark_light_srv.get_theme()) {
       this.theme = "dark_mode";
     }
@@ -97,5 +119,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+    this.destroyed.next();
+    this.destroyed.complete();
   }
 }

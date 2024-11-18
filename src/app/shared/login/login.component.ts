@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatLabel } from '@angular/material/form-field';
@@ -15,6 +15,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackBarComponent } from '../snack-bar/snack-bar.component';
 import { UserInfo } from '../../services/user.service';
 import { GlobalService } from '../../services/global.service';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Subject, takeUntil } from 'rxjs';
 
 enum Result {
   success,
@@ -39,31 +41,32 @@ enum Result {
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   constructor(
     private dialogRef: MatDialogRef<LoginComponent>,
     private authService: AuthService,
-    private globalService: GlobalService
+    private globalService: GlobalService,
+    private breakpointServer: BreakpointObserver
   ) { }
   snackbar = inject(MatSnackBar);
   signinForm: FormGroup;
   hidePassword: boolean = true;
   loginBtnDisable: boolean = false;
   authUserResult: Result = Result.none;
-
+  destroyed = new Subject<void>();
   onSubmit() {
     this.loginBtnDisable = true;
     this.authUserResult = Result.none;
-    
+
     const username = this.signinForm.value['username'];
     const passwd = this.signinForm.value['password'];
     // check inputs validation
-    if (username === null || this.signinForm.get('username').invalid){
+    if (username === null || this.signinForm.get('username').invalid) {
       this.signinForm.value['username'] = "";
       this.loginBtnDisable = false;
       return
     }
-    if (passwd === null || this.signinForm.get('password').invalid){
+    if (passwd === null || this.signinForm.get('password').invalid) {
       this.signinForm.value['password'] = "";
       this.loginBtnDisable = false;
       return
@@ -80,8 +83,8 @@ export class LoginComponent implements OnInit {
           const result = value.result as UserInfo
           window.sessionStorage.setItem('UID', String(result.ID));
           window.sessionStorage.setItem('token', value.token);
-          window.sessionStorage.setItem('username',result.Username);
-          result.Avatar === undefined? window.sessionStorage.setItem('avatar',this.globalService.avatarPlaceholder):window.sessionStorage.setItem('avatar',result.Avatar);
+          window.sessionStorage.setItem('username', result.Username);
+          result.Avatar === undefined ? window.sessionStorage.setItem('avatar', this.globalService.avatarPlaceholder) : window.sessionStorage.setItem('avatar', result.Avatar);
           setTimeout(() => {
             this.dialogRef.close();
           }, 1500);
@@ -121,9 +124,29 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // UI display control
+    const el_mat_content = document.getElementById("mat-dialog-content-login");
+    const el_div_content = document.getElementById("div-login-content");
+    this.breakpointServer.observe([
+      Breakpoints.XSmall,
+      Breakpoints.Small,
+    ]).pipe(takeUntil(this.destroyed)).subscribe(result => {
+      if (result.matches) {
+        el_mat_content.style.maxHeight = "90%";
+        el_div_content.style.flexDirection = "column";
+      }else{
+        el_mat_content.style.maxHeight = "65vh";
+        el_div_content.style.flexDirection = "row";
+      }
+    });
+    // Form group
     this.signinForm = new FormGroup({
       'username': new FormControl(null, [Validators.required]),
       'password': new FormControl(null, Validators.required),
     });
+  }
+  ngOnDestroy(): void {
+    this.destroyed.next();
+    this.destroyed.complete();
   }
 }
