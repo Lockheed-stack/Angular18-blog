@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideZoneChangeDetection, importProvidersFrom } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withRouterConfig } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -15,13 +15,15 @@ registerLocaleData(zh);
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }), 
-    provideRouter(routes), 
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(
+      routes,
+    ),
     provideAnimationsAsync(),
     provideHttpClient(
       withInterceptors([authInterceptorInterceptor])
     ),
-    provideMarkdown({ 
+    provideMarkdown({
       loader: HttpClient,
       markedOptions: {
         provide: MARKED_OPTIONS,

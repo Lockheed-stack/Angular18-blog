@@ -10,6 +10,7 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { DarkLightService } from '../../services/dark-light.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { InterComponentService } from '../../services/inter-component.service';
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
@@ -26,7 +27,8 @@ export class NavBarComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private dark_light_srv: DarkLightService,
-    private breakpointServer: BreakpointObserver
+    private breakpointServer: BreakpointObserver,
+    private inter_component_service: InterComponentService,
   ) { }
   readonly dialog = inject(MatDialog);
   dialogCfg: MatDialogConfig = new MatDialogConfig();
@@ -56,6 +58,11 @@ export class NavBarComponent implements OnInit, OnDestroy {
         }
       })
     )
+  }
+  openLoginDialogWithReturn() {
+    this.loginDialogRef = this.dialog.open(LoginComponent, this.dialogCfg);
+    this.loginDialogRef.addPanelClass("dialog-class-login");
+    return this.loginDialogRef
   }
   onManageBtnClicked() {
     this.router.navigate(['management']);
@@ -90,7 +97,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
           width: "95%",
           maxWidth: "980px",
         }
-        if (this.loginDialogRef !== null && this.loginDialogRef.getState() === MatDialogState.OPEN) {
+        if (this.loginDialogRef !== undefined && this.loginDialogRef.getState() === MatDialogState.OPEN) {
           this.loginDialogRef = this.loginDialogRef.updateSize("95%", "95%");
         }
       } else {
@@ -101,7 +108,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
           width: "980px",
           maxWidth: "980px",
         }
-        if (this.loginDialogRef !== null && this.loginDialogRef.getState() === MatDialogState.OPEN) {
+        if (this.loginDialogRef !== undefined && this.loginDialogRef.getState() === MatDialogState.OPEN) {
           this.loginDialogRef = this.loginDialogRef.updateSize("980px",);
         }
       }
@@ -116,6 +123,12 @@ export class NavBarComponent implements OnInit, OnDestroy {
     if (avatar !== null) {
       this.avatarURL = avatar;
     }
+    // listen login status event
+    this.subscription.add(this.inter_component_service.getVoidMessageObservable().subscribe(
+      () => {
+        this.avatarURL = "";
+      }
+    ));
   }
   ngOnDestroy(): void {
     this.subscription.unsubscribe();

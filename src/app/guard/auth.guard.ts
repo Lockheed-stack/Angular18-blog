@@ -6,6 +6,7 @@ import { map } from 'rxjs';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
 import { AuthService } from '../services/auth.service';
 import { HttpStatusCode } from '@angular/common/http';
+import { InterComponentService } from '../services/inter-component.service';
 
 export const authGuard: CanActivateFn = (route, state) => {
 
@@ -13,34 +14,27 @@ export const authGuard: CanActivateFn = (route, state) => {
   const router = inject(Router)
   const authService = inject(AuthService);
   const dialog = inject(MatDialog);
-
+  const inter_component_service = inject(InterComponentService);
+  
   // the user has never been logined before
   if (token === null) {
-    const dialogCfg: MatDialogConfig = {
-      disableClose: true,
-      height: "540px",
-      maxHeight: "780px",
-      width: "980px",
-      maxWidth: "980px",
-    }
-    const dialogRef = dialog.open(LoginComponent, dialogCfg);
-    dialogRef.addPanelClass("dialog-class-login");
-    return dialogRef.afterClosed().pipe(
-      map(() => {
-        if (dialogRef.componentInstance.authUserResult === 0) {
-          return true;
-        }
-        router.navigate([""]);
-        return false;
-      })
-    )
+    dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: "用户身份认证",
+        content: "还未登录，即将返回首页"
+      }
+    })
+    window.sessionStorage.clear();
+    router.navigate(["/"]);
+    inter_component_service.sendVoidMessage();
+    return false;
   }
 
-  // check if the token is valid
+  // check if the token existed
   return authService.token_check().pipe(
     map((value) => {
       switch (value) {
-        case HttpStatusCode.Unauthorized: {
+        case HttpStatusCode.Unauthorized: { // Invalid token
           dialog.open(ConfirmDialogComponent, {
             data: {
               title: "用户身份认证",
@@ -48,18 +42,14 @@ export const authGuard: CanActivateFn = (route, state) => {
             }
           })
           window.sessionStorage.clear();
-          
-          if (route.url.length === 0){ // in root Route
-            location.reload();
-          }else{
-            router.navigate([""]);
-          }
+          router.navigate([""]);
+          inter_component_service.sendVoidMessage();
           return false;
         }
-        case HttpStatusCode.Ok: {
+        case HttpStatusCode.Ok: { // Valid token
           return true;
         }
-        default: {
+        default: { // User authentication service error
           dialog.open(ConfirmDialogComponent, {
             data: {
               title: "用户身份认证",
@@ -67,6 +57,7 @@ export const authGuard: CanActivateFn = (route, state) => {
             }
           })
           router.parseUrl("");
+          inter_component_service.sendVoidMessage();
           return false;
         }
       }

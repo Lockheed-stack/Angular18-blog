@@ -1,23 +1,37 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ManagementCenterComponent } from './management-center.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { UserComponent } from './user/user.component';
-import { ArticleComponent } from './article/article.component';
-import { ArticleWriteComponent } from './article/article-write/write.component';
-import { ArticleModifyComponent } from './article/article-modify/modify.component';
-import { CategoryComponent } from './category/category.component';
-import { CategoryAddComponent } from './category/category-add/category-add.component';
 
 const routes: Routes = [
   {path:"",component:ManagementCenterComponent,children:[
-    {path:"dashboard",component:DashboardComponent},
-    {path:"user",component:UserComponent},
-    {path:"allArticle",component:ArticleComponent},
-    {path:"WriteArticle",component:ArticleWriteComponent},
-    {path:"ModifyBlog",component:ArticleModifyComponent},
-    {path:"allCategory",component:CategoryComponent},
-    {path:"addCategory",component:CategoryAddComponent}
+    {
+      path:"dashboard",
+      loadComponent:()=>import('./dashboard/dashboard.component').then(c=>c.DashboardComponent),
+    },
+    {
+      path:"user",
+      loadComponent:()=>import('./user/user.component').then(c=>c.UserComponent),
+    },
+    {
+      path:"allArticle",
+      loadComponent:()=>import('./article/article.component').then(c=>c.ArticleComponent),
+    },
+    {
+      path:"WriteArticle",
+      loadComponent:()=>import('./article/article-write/write.component').then(c=>c.ArticleWriteComponent),
+    },
+    {
+      path:"ModifyBlog",
+      loadComponent:()=>import('./article/article-modify/modify.component').then(c=>c.ArticleModifyComponent),
+    },
+    {
+      path:"allCategory",
+      loadComponent:()=>import('./category/category.component').then(c=>c.CategoryComponent),
+    },
+    {
+      path:"addCategory",
+      loadComponent:()=>import('./category/category-add/category-add.component').then(c=>c.CategoryAddComponent),
+    }
   ]}
 ];
 
