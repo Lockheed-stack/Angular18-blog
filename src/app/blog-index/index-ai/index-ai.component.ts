@@ -387,7 +387,7 @@ export class IndexAiComponent implements OnInit, AfterViewInit,OnDestroy {
         this.chatboxWidth = "95vw";
       } else {
         this.openModelSetting = true;
-        this.sidenavMode = "push";
+        this.sidenavMode = "side";
         this.chatboxWidth = "70vw";
       }
     });
