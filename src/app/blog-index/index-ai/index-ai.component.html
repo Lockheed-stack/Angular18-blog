@@ -1,0 +1,148 @@
+<div class="ai-container">
+    <mat-sidenav-container [hasBackdrop]="false">
+        <mat-sidenav #drawer [mode]="sidenavMode" [opened]="openModelSetting">
+            <!-- model selection -->
+            <form class="model-setting" [formGroup]="modelFormGroup">
+                <button mat-icon-button (click)="drawer.toggle()">
+                    <mat-icon>close</mat-icon>
+                </button>
+                <mat-list>
+                    <mat-list-item [lines]="4">
+                        <mat-icon matListItemIcon>precision_manufacturing</mat-icon>
+                        <div matListItemTitle>选择模型</div>
+                        <mat-form-field MatListItemMeta>
+                            <mat-select formControlName="ModelKind" (selectionChange)="changeModel($event)">
+                                @for (group of modelGroups; track group) {
+                                <mat-optgroup [label]="group.name">
+                                    @for (model of group.models; track model) {
+                                    <mat-option [value]="model.value">{{model.viewValue}}</mat-option>
+                                    }
+                                </mat-optgroup>
+                                }
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-list-item>
+                </mat-list>
+
+                <mat-divider></mat-divider>
+
+                <h3>可调参数选项</h3>
+                <mat-list>
+                    @for (item of tunningOptions; track item.name) {
+                    <mat-list-item [lines]="4">
+                        <mat-icon matListItemIcon>{{item.icon}}</mat-icon>
+                        <div matListItemTitle style="display: flex;">
+                            {{item.name}}
+                            <mat-icon [matTooltip]="item.description" style="margin-left: 10px;">help</mat-icon>
+                        </div>
+
+                        <div style="display: flex;">
+                            <mat-slider [max]="item.max_value" [min]="item.min_value" [step]="item.step"
+                                style="min-width: 40%;">
+                                <input matSliderThumb [formControlName]="item.name"
+                                    [value]="modelFormGroup.get(item.name).value">
+                            </mat-slider>
+
+                            <mat-form-field style="margin-left: 10px;">
+                                <input matInput type="number" [formControlName]="item.name"
+                                    [value]="modelFormGroup.get(item.name).value"
+                                    (blur)="onParameterInputBlur(item.name)">
+                            </mat-form-field>
+                        </div>
+                    </mat-list-item>
+                    }
+                </mat-list>
+
+            </form>
+        </mat-sidenav>
+
+        <mat-sidenav-content>
+            <section class="msger" [ngStyle]="{'width':chatboxWidth}">
+                <header class="msger-header">
+                    <button mat-icon-button (click)="drawer.toggle()">
+                        <mat-icon>settings</mat-icon>
+                    </button>
+                    <h4>当前模型：{{modelFormGroup.get("ModelKind").value}} (AI 生成内容仅供参考，不代表本站观点!)</h4>
+                    <span style="flex: 0 auto;"></span>
+                </header>
+
+                <main class="msger-chat" id="msger-chat">
+
+                    <!-- prologue of play -->
+                    <div class="msg left-msg">
+                        <img class="msg-img" src="https://material.angular.io/assets/img/examples/shiba1.jpg" alt="">
+                        <mat-card appearance="outlined" class="msg-bubble">
+                            <mat-card-header>
+                                <mat-card-title>AI</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <p> 已经准备好了,我们可以开始对话了~ </p>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+
+                    @for (item of chatingRecordsArray; track $index) {
+                    <!-- AI answers are on the left, while the human questions are on the right. -->
+                    @if (item.spokesman === 0) {
+                    <div class="msg left-msg">
+                        <img class="msg-img" src="https://material.angular.io/assets/img/examples/shiba1.jpg" alt="">
+                        <mat-card appearance="outlined" class="msg-bubble">
+                            <mat-card-header>
+                                <mat-card-title>{{item.username}}</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                @if (item.content.length === 0) {
+                                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                                }@else {
+                                @switch (item.content_type) {
+                                @case (1) {
+                                <img style="width: 80%;object-fit: scale-down;" [src]="item.content"
+                                    (error)="onImgLoadFail(item)">
+                                @if (item.errorInfo!==undefined) {
+                                <p> <strong> {{item.errorInfo}} </strong> </p>
+                                }
+                                }
+                                @default {
+                                <markdown ngPreserveWhitespaces emoji katex [katexOptions]="katexOpt"
+                                    [data]="item.content">
+                                </markdown>
+                                }
+                                }
+                                }
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                    }@else {
+                    <div class="msg right-msg">
+                        <img class="msg-img" [src]="item.avatar" alt="">
+                        <mat-card appearance="outlined" class="msg-bubble">
+                            <mat-card-header>
+                                <mat-card-title>{{item.username}}</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <p>
+                                    {{item.content}}
+                                </p>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                    }
+                    }
+                </main>
+
+                <form class="msger-inputarea" [formGroup]="chatFormGroup" (ngSubmit)="submitPrompt()">
+                    <mat-form-field class="msger-input">
+                        <input id="ai-chat-input" type="text" matInput placeholder="说点什么吧..." formControlName="prompt">
+                        @if (chatFormGroup.get('prompt').errors!==null &&
+                        chatFormGroup.get('prompt').errors['required']) {
+                        <mat-error><strong>你还没说呢！</strong></mat-error>
+                        }
+                    </mat-form-field>
+                    <button type="submit" mat-fab [disabled]="disableSendBtn">
+                        <mat-icon>reply</mat-icon>
+                    </button>
+                </form>
+            </section>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+</div>

@@ -70,6 +70,9 @@ export class NavBarComponent implements OnInit, OnDestroy {
   onHomeBtnClicked() {
     this.router.navigate(['/']);
   }
+  onAIBtnClicked(){
+    this.router.navigate(['ai']);
+  }
   onLogoutBtnClicked() {
     this.logoutDialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
@@ -79,7 +82,10 @@ export class NavBarComponent implements OnInit, OnDestroy {
     })
     this.subscription.add(
       this.logoutDialogRef.afterClosed().subscribe(() => {
-        if (this.logoutDialogRef.componentInstance.is_yes) { this.avatarURL = ""; }
+        if (this.logoutDialogRef.componentInstance.is_yes) { 
+          this.avatarURL = "";
+          window.sessionStorage.clear();
+        }
       })
     )
   }

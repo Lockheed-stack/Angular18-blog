@@ -9,5 +9,6 @@ export class GlobalService {
   public qiniuArticleURL: string = this.domain + "qiniu-article/";
   public imagePlaceholder:string = "https://placehold.co/200x200?text=Image";
   public avatarPlaceholder:string = "https://placehold.co/200x200?text=?";
+  public FailedToLoadImgPlaceholder:string = "https://placehold.co/100x100?text=X";
   constructor() { }
 }

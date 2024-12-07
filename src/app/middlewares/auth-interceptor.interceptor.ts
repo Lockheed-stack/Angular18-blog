@@ -5,7 +5,7 @@ import { GlobalService } from '../services/global.service';
 export const authInterceptorInterceptor: HttpInterceptorFn = (req, next) => {
 
   const splited = req.url.split("/");
-  if (splited[3] === "management") {
+  if (splited[3] === "management" || splited[3] === "ai") {
     const cloneReq = req.clone(
       {
         headers: req.headers.append('Authorization', 'Bearer '.concat(window.sessionStorage.getItem('token'))),

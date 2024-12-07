@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { BlogIndexComponent } from './blog-index/blog-index.component';
 import { IndexLayoutComponent } from './blog-index/index-layout/index-layout.component';
 import { authGuard } from './guard/auth.guard';
+import { animation } from '@angular/animations';
 
 export const routes: Routes = [
     {
@@ -21,6 +22,11 @@ export const routes: Routes = [
                 loadComponent: () => import('./blog-index/index-category/index-category.component').then(c => c.IndexCategoryComponent),
                 data: { animation: "CategoryPage" }
             },
+            {
+                path:"ai",
+                loadComponent:()=>import('./blog-index/index-ai/index-ai.component').then(c=>c.IndexAiComponent),
+                data:{animation:"AI-Page"}
+            }
         ],
         data: { animation: "IndexFrameworkPage" }
     },

@@ -42,7 +42,6 @@ enum Add_or_Update {
   standalone: true,
   imports: [
     MatIconModule,
-    NgIconComponent,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
