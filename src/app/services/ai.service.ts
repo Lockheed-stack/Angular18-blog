@@ -37,7 +37,6 @@ export class AiService {
 
   StreamGetAIChatResponse(prompt: AI_TextOnly_Prompt) {
     const url = this.domain.domain + "ai/chat";
-    // const url = "http://localhost:8000/ai/chat";
     return this.http.post(
       url,
       prompt,
@@ -50,8 +49,7 @@ export class AiService {
   }
 
   AIPaintingResponse(prompt: AI_Text_to_Img_Prompt) {
-    const url = this.domain.domain + "ai/chat/text2img";
-    // const url = "http://localhost:8000/ai/chat/text2img";
+    const url = this.domain.domain + "ai/text2img";
     return this.http.post(
       url,
       prompt,
