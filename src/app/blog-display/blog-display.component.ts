@@ -121,7 +121,7 @@ export class BlogDisplayComponent implements OnInit, OnDestroy {
     this.disableAIAbstractBtn = true;
     this.AISummarization = "";
     this.AISummarizationResult = "";
-    this.aiservice.StreamGetAISummarizationResponse(this.rawMarkdown).subscribe({
+    this.aiservice.StreamGetAISummarizationResponse(this.rawMarkdown,this.blogInfo.ID).subscribe({
       next: (event) => {
         if (event.type === HttpEventType.DownloadProgress) {
           const partial = (event as HttpDownloadProgressEvent).partialText!;

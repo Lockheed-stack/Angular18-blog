@@ -58,7 +58,7 @@ export class AiService {
     )
   }
 
-  StreamGetAISummarizationResponse(rawMarkdon: string) {
+  StreamGetAISummarizationResponse(rawMarkdon: string, blogID: number) {
     // const url = "http://localhost:8000/" + "ai/summarization";
     const url = this.domain.domain + "ai/summarization";
     const blob = new Blob([rawMarkdon], { type: "text/plain" })
@@ -66,6 +66,9 @@ export class AiService {
       url,
       blob,
       {
+        params: {
+          blogID: blogID
+        },
         observe: "events",
         responseType: "text",
         reportProgress: true,
