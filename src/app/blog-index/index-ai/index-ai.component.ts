@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { GlobalService } from '../../services/global.service';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { AiService, AI_TextOnly_Prompt, AI_Text_to_Img_Prompt } from '../../services/ai.service';
+import { AiService, AI_TextOnly_Prompt, AI_Text_to_Img_Prompt, Msg } from '../../services/ai.service';
 import { HttpDownloadProgressEvent, HttpErrorResponse, HttpEventType } from '@angular/common/http';
 import { KatexOptions, MarkdownModule, } from 'ngx-markdown';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
@@ -32,22 +32,22 @@ enum AIorHuman {
   Human,
 }
 
-interface ModelType {
+interface ModelItem {
   value: string;
   viewValue: string;
 }
-interface ModelGroup {
+interface ModelSelectionGroup {
   name: string;
-  models: ModelType[];
+  models: ModelItem[];
 }
 interface ModelTunningOptions {
   name: string;
-  description?: string;
-  icon?: string;
-  step: number;
-  default_value: number;
-  min_value: number;
-  max_value: number;
+  description: string;
+  icon: string;
+  step?: number;
+  default_value: number | string;
+  min_value?: number;
+  max_value?: number;
 }
 interface ModelParameterRange {
   min_val: number;
@@ -88,7 +88,7 @@ interface ChatingRecords {
   templateUrl: './index-ai.component.html',
   styleUrl: './index-ai.component.scss'
 })
-export class IndexAiComponent implements OnInit, AfterViewInit,OnDestroy {
+export class IndexAiComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // inject services
   globalservice = inject(GlobalService);
@@ -98,10 +98,11 @@ export class IndexAiComponent implements OnInit, AfterViewInit,OnDestroy {
   // variables of conversation
   chatingRecordsArray: Array<ChatingRecords> = [];
   conversationID: number = 0;
+  messagesContext: Array<Msg> = [];
 
   // model relate
   modelFormGroup: FormGroup;
-  modelGroups: ModelGroup[] = [
+  modelGroups: ModelSelectionGroup[] = [
     {
       name: "文本生成(text only)",
       models: [
@@ -146,6 +147,12 @@ export class IndexAiComponent implements OnInit, AfterViewInit,OnDestroy {
       max_value: 50,
       step: 1,
       icon: "sports_score"
+    },
+    {
+      name: "system message",
+      description: "Predefined AI roles",
+      icon: "build",
+      default_value: "you are a helpful assistant",
     }
   ];
   textToImgOptions: ModelTunningOptions[] = [
@@ -198,8 +205,8 @@ export class IndexAiComponent implements OnInit, AfterViewInit,OnDestroy {
   }
   destroyed = new Subject<void>();
   openModelSetting: boolean = true;
-  sidenavMode:MatDrawerMode = "side";
-  chatboxWidth:string = "70vw";
+  sidenavMode: MatDrawerMode = "side";
+  chatboxWidth: string = "70vw";
 
   scrollToLatestNews(timeout: number) {
     setTimeout(() => {
@@ -247,7 +254,7 @@ export class IndexAiComponent implements OnInit, AfterViewInit,OnDestroy {
       this.disableSendBtn = true;
       const avatar = window.sessionStorage.getItem('avatar');
       const username = window.sessionStorage.getItem('username');
-      const record: ChatingRecords = {
+      const user_question_record: ChatingRecords = {
         id: this.conversationID,
         username: username === null ? "???" : username,
         spokesman: AIorHuman.Human,
@@ -259,23 +266,25 @@ export class IndexAiComponent implements OnInit, AfterViewInit,OnDestroy {
       this.chatFormGroup.setValue({ prompt: "" });
       this.inputElement.value = "";
       this.chatFormGroup.get("prompt").setErrors({ required: false });
-      this.chatingRecordsArray.push(record);
+      this.chatingRecordsArray.push(user_question_record);
+      this.messagesContext.push({ role: "user", content: user_question_record.content });
       this.scrollToLatestNews(10);
 
       // AI answers
-      const tmp: ChatingRecords = {
+      const AI_answar_record: ChatingRecords = {
         id: this.conversationID,
         username: this.modelFormGroup.get('ModelKind').value,
         content_type: this.modelBelongsTo.get(this.modelFormGroup.get('ModelKind').value),
         spokesman: AIorHuman.AI,
         content: "",
       }
+      this.chatingRecordsArray.push(AI_answar_record);
 
-      this.chatingRecordsArray.push(tmp);
-      switch (tmp.content_type) {
+      // async response of AI
+      switch (AI_answar_record.content_type) {
         case 1: { // text-to-image
           const prompt: AI_Text_to_Img_Prompt = {
-            Prompt: record.content,
+            Prompt: user_question_record.content,
             Height: this.modelFormGroup.get('height').value,
             Width: this.modelFormGroup.get('width').value,
             Guidance: this.modelFormGroup.get('guidance').value,
@@ -311,11 +320,11 @@ export class IndexAiComponent implements OnInit, AfterViewInit,OnDestroy {
           break;
         }
         default: { // text only
+          const systemMsg = this.modelFormGroup.get("systemMsg").value;
+          this.messagesContext[0].content = systemMsg === "" ? "you are a helpful assistant" : systemMsg;
+
           const prompt: AI_TextOnly_Prompt = {
-            Msg: {
-              content: record.content,
-              role: "assistant"
-            },
+            Msg: this.messagesContext,
             ModelKind: this.modelFormGroup.get('ModelKind').value,
             Temperature: this.modelFormGroup.get('temperature').value,
             TopK: this.modelFormGroup.get('top_k').value
@@ -329,6 +338,7 @@ export class IndexAiComponent implements OnInit, AfterViewInit,OnDestroy {
                 this.scrollToLatestNews(10);
               } else if (event.type === HttpEventType.Response) {
                 // AI finished this answer.
+                this.messagesContext.push({ role: "assistant", content: this.chatingRecordsArray[this.conversationID].content });
                 this.conversationID += 1;
                 this.scrollToLatestNews(10);
                 this.disableSendBtn = false;
@@ -364,9 +374,16 @@ export class IndexAiComponent implements OnInit, AfterViewInit,OnDestroy {
       "prompt": new FormControl('', [Validators.required])
     })
     this.modelFormGroup = new FormGroup({
+
+      // model selection options
       "ModelKind": new FormControl(this.modelGroups[0].models[0].value),
+
+      // text-only options
       "temperature": new FormControl(this.textOnlyOptions[0].default_value),
       "top_k": new FormControl(this.textOnlyOptions[1].default_value),
+      "systemMsg": new FormControl('you are a helpful assistant'),
+
+      // text-to-image options
       "height": new FormControl(this.textToImgOptions[0].default_value),
       "width": new FormControl(this.textToImgOptions[1].default_value),
       "guidance": new FormControl(this.textToImgOptions[2].default_value)
@@ -374,6 +391,9 @@ export class IndexAiComponent implements OnInit, AfterViewInit,OnDestroy {
 
     // model tunning options
     this.tunningOptions = this.textOnlyOptions;
+
+    // messages context
+    this.messagesContext.push({ role: "system", content: this.modelFormGroup.get("systemMsg").value });
 
     // UI control
     this.inputElement = (document.getElementById("ai-chat-input")) as HTMLInputElement;

@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { GlobalService } from './global.service';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, map, Observable, of, throwError } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 export interface AI_TextOnly_Prompt {
-  Msg: Msg;
+  Msg: Array<Msg>;
   ModelKind: string;
   Temperature: number;
   TopK: number;
@@ -12,7 +11,6 @@ export interface AI_TextOnly_Prompt {
 export interface Msg {
   content: string;
   role: string;
-  [property: string]: any;
 }
 
 export interface AI_Text_to_Img_Prompt {
@@ -37,6 +35,7 @@ export class AiService {
 
   StreamGetAIChatResponse(prompt: AI_TextOnly_Prompt) {
     const url = this.domain.domain + "ai/chat";
+    // const url = "http://localhost:8000/" + "ai/chat";
     return this.http.post(
       url,
       prompt,
@@ -55,6 +54,21 @@ export class AiService {
       prompt,
       {
         responseType: "blob"
+      }
+    )
+  }
+
+  StreamGetAISummarizationResponse(rawMarkdon: string) {
+    // const url = "http://localhost:8000/" + "ai/summarization";
+    const url = this.domain.domain + "ai/summarization";
+    const blob = new Blob([rawMarkdon], { type: "text/plain" })
+    return this.http.post(
+      url,
+      blob,
+      {
+        observe: "events",
+        responseType: "text",
+        reportProgress: true,
       }
     )
   }

@@ -35,7 +35,11 @@
                             {{item.name}}
                             <mat-icon [matTooltip]="item.description" style="margin-left: 10px;">help</mat-icon>
                         </div>
-
+                        @if (item.name === "system message") {
+                        <mat-form-field>
+                            <input type="text" matInput placeholder="you are a helpful assistant" formControlName="systemMsg">
+                        </mat-form-field>
+                        }@else {
                         <div style="display: flex;">
                             <mat-slider [max]="item.max_value" [min]="item.min_value" [step]="item.step"
                                 style="min-width: 40%;">
@@ -49,6 +53,7 @@
                                     (blur)="onParameterInputBlur(item.name)">
                             </mat-form-field>
                         </div>
+                        }
                     </mat-list-item>
                     }
                 </mat-list>

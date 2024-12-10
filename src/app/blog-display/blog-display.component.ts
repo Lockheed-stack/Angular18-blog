@@ -1,9 +1,8 @@
-import { Component, inject, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { NavBarComponent } from '../shared/nav-bar/nav-bar.component';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { BlogMarkdownComponent, Title } from './blog-markdown/blog-markdown.component';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { CdkDrag } from '@angular/cdk/drag-drop';
-import { NgIf } from '@angular/common';
+import { NgStyle } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { CdkListbox, CdkOption } from '@angular/cdk/listbox';
@@ -12,11 +11,17 @@ import hljs from 'highlight.js/lib/common';
 import hljs_dockerfile from 'highlight.js/lib/languages/dockerfile'
 import { ArticleInfo, ArticlesService } from '../services/articles.service';
 import { ActivatedRoute } from '@angular/router';
-import {MatCardModule} from '@angular/material/card';
+import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackBarComponent } from '../shared/snack-bar/snack-bar.component';
 import { UserInfo, UserService } from '../services/user.service';
 import { FooterComponent } from '../shared/footer/footer.component';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Subject, takeUntil } from 'rxjs';
+import { AiService } from '../services/ai.service';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { HttpDownloadProgressEvent, HttpErrorResponse, HttpEventType } from '@angular/common/http';
+import { InfoCardComponent } from '../shared/info-card/info-card.component';
 
 hljs.registerLanguage('dockerfile', hljs_dockerfile);
 
@@ -35,16 +40,21 @@ hljs.registerLanguage('dockerfile', hljs_dockerfile);
     NzDrawerModule,
     MatCardModule,
     FooterComponent,
+    NgStyle,
+    MatProgressBarModule,
+    InfoCardComponent,
   ],
   templateUrl: './blog-display.component.html',
   styleUrl: './blog-display.component.scss',
 })
-export class BlogDisplayComponent implements OnInit, OnChanges {
+export class BlogDisplayComponent implements OnInit, OnDestroy {
 
   constructor(
     private articleService: ArticlesService,
     private route: ActivatedRoute,
     private userService: UserService,
+    private breakpointServer: BreakpointObserver,
+    private aiservice: AiService
   ) { }
   readonly snackbar = inject(MatSnackBar);
   loading: boolean = true;
@@ -53,6 +63,13 @@ export class BlogDisplayComponent implements OnInit, OnChanges {
   blogInfo: ArticleInfo = null;
   userInfo: UserInfo = null;
   markdownURL: string = "";
+  destroyed = new Subject<void>();
+  blogInfoFlexDirection: string = "row";
+  // ai summarization setting
+  disableAIAbstractBtn: boolean = false;
+  rawMarkdown: string = "";
+  AISummarization: string = "";
+  AISummarizationResult: string = "";
 
   markdownReady(event: { ready: boolean, titles: Array<Title> }) {
     if (event.ready) {
@@ -84,13 +101,13 @@ export class BlogDisplayComponent implements OnInit, OnChanges {
       }
     })
   }
-  getAuthorInfo(usersID:Array<number>){
+  getAuthorInfo(usersID: Array<number>) {
     this.userService.GetPublicUsersInfo(usersID).subscribe({
       next: (val_userinfo) => {
-        if (val_userinfo!==null){
+        if (val_userinfo !== null) {
           this.userInfo = val_userinfo.result[0];
-        }else{
-          this.userInfo.Username = "获取文章作者信息失败";  
+        } else {
+          this.userInfo.Username = "获取文章作者信息失败";
         }
       },
       error: (err_userinfo) => {
@@ -98,6 +115,33 @@ export class BlogDisplayComponent implements OnInit, OnChanges {
         this.userInfo.Username = "获取文章作者信息失败";
       }
     })
+  }
+
+  onAIAbstractBtnClicked() {
+    this.disableAIAbstractBtn = true;
+    this.AISummarization = "";
+    this.AISummarizationResult = "";
+    this.aiservice.StreamGetAISummarizationResponse(this.rawMarkdown).subscribe({
+      next: (event) => {
+        if (event.type === HttpEventType.DownloadProgress) {
+          const partial = (event as HttpDownloadProgressEvent).partialText!;
+          this.AISummarization = partial;
+        } else if (event.type === HttpEventType.Response) {
+          // AI finished summarization
+          this.AISummarizationResult = "download_done";
+        }
+      },
+      error: (err) => {
+        const e = err as HttpErrorResponse;
+        this.AISummarization = e.message;
+        this.AISummarizationResult = "dangerous";
+        this.disableAIAbstractBtn = false;
+      }
+    })
+  }
+
+  getRawMarkdown(event: string) {
+    this.rawMarkdown = event;
   }
 
   ngOnInit(): void {
@@ -130,9 +174,22 @@ export class BlogDisplayComponent implements OnInit, OnChanges {
         }
       }
     })
+
+    // UI display control
+    this.breakpointServer.observe([
+      Breakpoints.XSmall,
+      Breakpoints.Small,
+    ]).pipe(takeUntil(this.destroyed)).subscribe(result => {
+      if (result.matches) {
+        this.blogInfoFlexDirection = "column";
+      } else {
+        this.blogInfoFlexDirection = "row";
+      }
+    });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes)
+  ngOnDestroy(): void {
+    this.destroyed.next();
+    this.destroyed.complete();
   }
 }

@@ -1,0 +1,30 @@
+<div class="blog-card">
+    <div class="meta">
+        @if (blogInfoBg!=="") {
+        <div class="photo" [ngStyle]="{'background-image':blogInfoBg}"></div>
+        }
+    </div>
+    <div class="description">
+        <h1>{{blogInfoInput.title}}</h1>
+        <h4 style="display: flex;align-items: center;">
+            阅读量：{{blogInfoInput.pageview}}
+            <mat-icon style="margin-left: 5px;">visibility</mat-icon>
+        </h4>
+        <p> {{blogInfoInput.desc}}</p>
+    </div>
+</div>
+<div class="blog-card alt">
+    <div class="meta">
+        @if (userInfoBg!=="") {
+        <div class="photo" [ngStyle]="{'background-image':userInfoBg}"> </div>
+        }
+    </div>
+    <div class="description">
+        <h1 style="margin-bottom: 3px;">作者</h1>
+        <span style="display: flex;align-items: center;">
+            <img class="avatar" [src]="authorInfoInput.avatar" alt="">
+            <h1>{{authorInfoInput.username}}</h1>
+        </span>
+        <p>{{authorInfoInput.desc}}</p>
+    </div>
+</div>

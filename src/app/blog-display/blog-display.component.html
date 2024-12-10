@@ -2,16 +2,38 @@
     <div class="blog_info_skeleton">
         <nz-skeleton [nzActive]="true" [nzLoading]="loading">
             @if (blogInfo!==null && userInfo!==null) {
-            <div class="blog_info">
-                <h1>{{blogInfo.Title}}</h1>
-                <p>文章简介：{{blogInfo.Desc}}</p>
-                <p>阅读量：{{blogInfo.PageView}}</p>
+            <div class="blog_info" [ngStyle]="{'flex-direction':blogInfoFlexDirection}">
+                
+                <app-info-card style="display: flex; width: 100%; align-items: center;justify-content: center;"
+                    [ngStyle]="{'flex-direction':blogInfoFlexDirection}"
+                    [authorInfoInput]="{username:userInfo.Username ,desc:userInfo.SelfDesc ,avatar:userInfo.Avatar}"
+                    [blogInfoInput]="{title:blogInfo.Title ,desc:blogInfo.Desc ,pageview:blogInfo.PageView}"></app-info-card>
+            </div>
+            <div class="ai_abstract">
                 <mat-card appearance="outlined">
                     <mat-card-header>
-                        <img mat-card-avatar [src]="userInfo.Avatar" alt="">
-                        <mat-card-title>{{userInfo.Username}}</mat-card-title>
-                        <mat-card-subtitle>{{userInfo.SelfDesc}}</mat-card-subtitle>
+                        <mat-card-title> <mat-icon>check_circle</mat-icon> AI 摘要 </mat-card-title>
+                        <mat-card-subtitle> <mat-icon>warning</mat-icon> AI 摘要仅供参考，不代表作者或本站观点！</mat-card-subtitle>
                     </mat-card-header>
+                    <mat-card-content>
+                        @if (disableAIAbstractBtn&&AISummarization==="") {
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        }@else if (AISummarization!=="") {
+                        <p>
+                            {{AISummarization}}
+                        </p>
+                        }
+                    </mat-card-content>
+                    <mat-card-actions>
+                        <button mat-flat-button extended [disabled]="disableAIAbstractBtn"
+                            (click)="onAIAbstractBtnClicked()">
+                            <mat-icon>ads_click</mat-icon>
+                            试一试
+                        </button>
+                        @if (AISummarizationResult!=="") {
+                        <mat-icon>{{AISummarizationResult}}</mat-icon>
+                        }
+                    </mat-card-actions>
                 </mat-card>
             </div>
             }
@@ -21,7 +43,8 @@
     <div class="blog_body_skeleton">
         <nz-skeleton [nzActive]="true" [nzLoading]="loading">
             @if (markdownURL!=="") {
-            <app-blog-markdown (isReady)="markdownReady($event)" [blogURL]="markdownURL"></app-blog-markdown>
+            <app-blog-markdown (isReady)="markdownReady($event)" [blogURL]="markdownURL"
+                (getMarkdownData)="getRawMarkdown($event)"></app-blog-markdown>
             }
         </nz-skeleton>
     </div>

@@ -33,16 +33,17 @@ export class BlogMarkdownComponent implements OnInit, OnDestroy {
     private breakpointServer: BreakpointObserver
   ) { }
   @Output() isReady: EventEmitter<{ ready: boolean, titles: Array<Title> }> = new EventEmitter<{ ready: boolean, titles: Array<Title> }>;
+  @Output() getMarkdownData: EventEmitter<string> = new EventEmitter<string>;
   @Input() blogURL: string = "";
   titleArray: Array<Title> = [];
   titleNum: number = 0;
   markdownData: string = "";
-  markdown_width:string = "980px";
-  markdown_padding:string = "45px";
+  markdown_width: string = "980px";
+  markdown_padding: string = "45px";
   katexOpt: KatexOptions = {
     throwOnError: false,
-    output:"mathml",
-    displayMode:true
+    output: "mathml",
+    displayMode: true
   }
   destroyed = new Subject<void>();
 
@@ -82,23 +83,23 @@ export class BlogMarkdownComponent implements OnInit, OnDestroy {
       Breakpoints.Large,
       Breakpoints.XLarge,
     ]).pipe(takeUntil(this.destroyed)).subscribe(result => {
-      for(const query of Object.keys(result.breakpoints)){
-        if(result.breakpoints[query]){
+      for (const query of Object.keys(result.breakpoints)) {
+        if (result.breakpoints[query]) {
           this.markdown_width = `${window.innerWidth}px`;
-          switch(query){
-            case Breakpoints.XSmall:{
+          switch (query) {
+            case Breakpoints.XSmall: {
               this.markdown_padding = "10px";
               break;
             }
-            case Breakpoints.Small:{
+            case Breakpoints.Small: {
               this.markdown_padding = "15px";
               break;
             }
-            case Breakpoints.Medium:{
+            case Breakpoints.Medium: {
               this.markdown_padding = "30px";
               break;
             }
-            default:{
+            default: {
               this.markdown_padding = "45px";
               break;
             }
@@ -113,6 +114,7 @@ export class BlogMarkdownComponent implements OnInit, OnDestroy {
       this.articleService.GetMarkdown(this.blogURL).subscribe({
         next: (value) => {
           this.markdownData = value;
+          this.getMarkdownData.emit(value);
         },
         error: (err) => {
           this.markdownData = "# 文章不存在";

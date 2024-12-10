@@ -16,10 +16,13 @@
 
         .blog_info {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            justify-content: space-evenly;
+            align-items: flex-start;
             padding: 0 45px;
+        }
+        .ai_abstract{
+            margin-top: 10px;
+            padding: 0 30px;
         }
     }
 
