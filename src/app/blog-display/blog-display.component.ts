@@ -22,6 +22,7 @@ import { AiService } from '../services/ai.service';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { HttpDownloadProgressEvent, HttpErrorResponse, HttpEventType } from '@angular/common/http';
 import { InfoCardComponent } from '../shared/info-card/info-card.component';
+import { MarkdownModule } from 'ngx-markdown';
 
 hljs.registerLanguage('dockerfile', hljs_dockerfile);
 
@@ -43,6 +44,7 @@ hljs.registerLanguage('dockerfile', hljs_dockerfile);
     NgStyle,
     MatProgressBarModule,
     InfoCardComponent,
+    MarkdownModule
   ],
   templateUrl: './blog-display.component.html',
   styleUrl: './blog-display.component.scss',
@@ -69,7 +71,7 @@ export class BlogDisplayComponent implements OnInit, OnDestroy {
   disableAIAbstractBtn: boolean = false;
   rawMarkdown: string = "";
   AISummarization: string = "";
-  AISummarizationResult: string = "";
+  AISummarizationResultIcon: string = "";
 
   markdownReady(event: { ready: boolean, titles: Array<Title> }) {
     if (event.ready) {
@@ -118,26 +120,28 @@ export class BlogDisplayComponent implements OnInit, OnDestroy {
   }
 
   onAIAbstractBtnClicked() {
-    this.disableAIAbstractBtn = true;
-    this.AISummarization = "";
-    this.AISummarizationResult = "";
-    this.aiservice.StreamGetAISummarizationResponse(this.rawMarkdown,this.blogInfo.ID).subscribe({
-      next: (event) => {
-        if (event.type === HttpEventType.DownloadProgress) {
-          const partial = (event as HttpDownloadProgressEvent).partialText!;
-          this.AISummarization = partial;
-        } else if (event.type === HttpEventType.Response) {
-          // AI finished summarization
-          this.AISummarizationResult = "download_done";
+    if (this.rawMarkdown !== "") {
+      this.disableAIAbstractBtn = true;
+      this.AISummarization = "";
+      this.AISummarizationResultIcon = "";
+      this.aiservice.StreamGetAISummarizationResponse(this.rawMarkdown, this.blogInfo.ID).subscribe({
+        next: (event) => {
+          if (event.type === HttpEventType.DownloadProgress) {
+            const partial = (event as HttpDownloadProgressEvent).partialText!;
+            this.AISummarization = partial;
+          } else if (event.type === HttpEventType.Response) {
+            // AI finished summarization
+            this.AISummarizationResultIcon = "download_done";
+          }
+        },
+        error: (err) => {
+          const e = err as HttpErrorResponse;
+          this.AISummarization = e.message;
+          this.AISummarizationResultIcon = "dangerous";
+          this.disableAIAbstractBtn = false;
         }
-      },
-      error: (err) => {
-        const e = err as HttpErrorResponse;
-        this.AISummarization = e.message;
-        this.AISummarizationResult = "dangerous";
-        this.disableAIAbstractBtn = false;
-      }
-    })
+      })
+    }
   }
 
   getRawMarkdown(event: string) {

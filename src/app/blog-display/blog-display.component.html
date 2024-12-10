@@ -19,9 +19,10 @@
                         @if (disableAIAbstractBtn&&AISummarization==="") {
                         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
                         }@else if (AISummarization!=="") {
-                        <p>
+                        <!-- <p>
                             {{AISummarization}}
-                        </p>
+                        </p> -->
+                        <markdown [data]="AISummarization"></markdown>
                         }
                     </mat-card-content>
                     <mat-card-actions>
@@ -30,8 +31,8 @@
                             <mat-icon>ads_click</mat-icon>
                             试一试
                         </button>
-                        @if (AISummarizationResult!=="") {
-                        <mat-icon>{{AISummarizationResult}}</mat-icon>
+                        @if (AISummarizationResultIcon!=="") {
+                        <mat-icon>{{AISummarizationResultIcon}}</mat-icon>
                         }
                     </mat-card-actions>
                 </mat-card>
