@@ -71,7 +71,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
     this.router.navigate(['/']);
   }
   onAIBtnClicked(){
-    this.router.navigate(['ai']);
+    this.router.navigate(['AI']);
   }
   onLogoutBtnClicked() {
     this.logoutDialogRef = this.dialog.open(ConfirmDialogComponent, {

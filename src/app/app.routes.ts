@@ -23,7 +23,7 @@ export const routes: Routes = [
                 data: { animation: "CategoryPage" }
             },
             {
-                path:"ai",
+                path:"AI",
                 loadComponent:()=>import('./blog-index/index-ai/index-ai.component').then(c=>c.IndexAiComponent),
                 data:{animation:"AI-Page"}
             }
