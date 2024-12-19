@@ -1,0 +1,27 @@
+<div class="bookmark">
+    <div class="bookmark-header">
+        <h3>目录</h3>
+        <button mat-icon-button (click)="closeBottomSheet()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+    <mat-divider></mat-divider>
+    <mat-selection-list [multiple]="false">
+        @for (item of titleArray; track $index;let idx = $index ) {
+        @switch (item.level) {
+        @case (1) {
+        <mat-list-option (click)="scrollTitleIntoView(item.TitleId)"
+            [value]="item.TitleId">{{item.TitleName}}</mat-list-option>
+        }
+        @case (2) {
+        <mat-list-option style="padding-left: 30px;" (click)="scrollTitleIntoView(item.TitleId)"
+            [value]="item.TitleId">{{item.TitleName}}</mat-list-option>
+        }
+        @case (3) {
+        <mat-list-option style="padding-left: 45px;" (click)="scrollTitleIntoView(item.TitleId)"
+            [value]="item.TitleId">{{item.TitleName}}</mat-list-option>
+        }
+        }
+        }
+    </mat-selection-list>
+</div>

@@ -1,6 +1,4 @@
 /*PEN STYLES*/
-
-$color_white: var(--mat-app-background-color);
 $color_prime: #5ad67d;
 
 .blog-card {
@@ -16,14 +14,6 @@ $color_prime: #5ad67d;
     overflow: hidden;
     z-index: 0;
     min-width: 90%;
-
-    a {
-        color: inherit;
-
-        &:hover {
-            color: $color_prime;
-        }
-    }
 
     &:hover {
         .photo {
@@ -101,7 +91,7 @@ $color_prime: #5ad67d;
 
     @media (min-width: 640px) {
         flex-direction: row;
-        max-width: 100%;
+        margin-right: 10px;
         min-width: 45%;
         .meta {
             flex-basis: 40%;
@@ -126,7 +116,7 @@ $color_prime: #5ad67d;
 
         &.alt {
             flex-direction: row-reverse;
-
+            margin-left: 10px;
             .description {
                 &:before {
                     left: inherit;

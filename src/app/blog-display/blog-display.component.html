@@ -3,7 +3,7 @@
         <nz-skeleton [nzActive]="true" [nzLoading]="loading">
             @if (blogInfo!==null && userInfo!==null) {
             <div class="blog_info" [ngStyle]="{'flex-direction':blogInfoFlexDirection}">
-                
+
                 <app-info-card style="display: flex; width: 100%; align-items: center;justify-content: center;"
                     [ngStyle]="{'flex-direction':blogInfoFlexDirection}"
                     [authorInfoInput]="{username:userInfo.Username ,desc:userInfo.SelfDesc ,avatar:userInfo.Avatar}"
@@ -62,7 +62,7 @@
 <app-footer></app-footer>
 
 
-<nz-drawer [nzVisible]="openSidebar" nzPlacement="right" [nzTitle]="drawertitle" [nzClosable]="false"
+<!-- <nz-drawer [nzVisible]="openSidebar" nzPlacement="right" [nzTitle]="drawertitle" [nzClosable]="false"
     [nzExtra]="closebtn" (nzOnClose)="closeBookMark()">
     <ng-container *nzDrawerContent>
         <ul cdkListbox class="example-listbox">
@@ -85,13 +85,15 @@
         </ul>
     </ng-container>
 </nz-drawer>
+
 <ng-template #drawertitle>
     <h3>
         目录
     </h3>
 </ng-template>
+
 <ng-template #closebtn>
     <button mat-icon-button (click)="closeBookMark()">
         <mat-icon>close</mat-icon>
     </button>
-</ng-template>
+</ng-template> -->

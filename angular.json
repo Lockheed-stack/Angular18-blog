@@ -41,10 +41,10 @@
             "styles": [
               "src/styles.scss",
               "node_modules/ng-zorro-antd/skeleton/style/index.min.css",
-              "node_modules/ng-zorro-antd/drawer/style/index.min.css",
+
 
               "node_modules/ng-zorro-antd/upload/style/index.min.css",
-              "node_modules/primeng/resources/primeng.min.css",
+
               "node_modules/highlight.js/styles/base16/material.min.css"
             ],
             "scripts": [

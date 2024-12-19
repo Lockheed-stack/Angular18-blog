@@ -5,8 +5,6 @@ import { CdkDrag } from '@angular/cdk/drag-drop';
 import { NgStyle } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { CdkListbox, CdkOption } from '@angular/cdk/listbox';
-import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import hljs from 'highlight.js/lib/common';
 import hljs_dockerfile from 'highlight.js/lib/languages/dockerfile'
 import { ArticleInfo, ArticlesService } from '../services/articles.service';
@@ -23,6 +21,9 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { HttpDownloadProgressEvent, HttpErrorResponse, HttpEventType } from '@angular/common/http';
 import { InfoCardComponent } from '../shared/info-card/info-card.component';
 import { MarkdownModule } from 'ngx-markdown';
+import {MatBottomSheet, MatBottomSheetConfig, MatBottomSheetModule} from '@angular/material/bottom-sheet';
+import { BlogBookmarkComponent } from './blog-bookmark/blog-bookmark.component';
+import { ScrollStrategyOptions } from '@angular/cdk/overlay';
 
 hljs.registerLanguage('dockerfile', hljs_dockerfile);
 
@@ -36,15 +37,14 @@ hljs.registerLanguage('dockerfile', hljs_dockerfile);
     CdkDrag,
     MatIcon,
     MatButtonModule,
-    CdkListbox,
-    CdkOption,
-    NzDrawerModule,
+
     MatCardModule,
     FooterComponent,
     NgStyle,
     MatProgressBarModule,
     InfoCardComponent,
-    MarkdownModule
+    MarkdownModule,
+    MatBottomSheetModule
   ],
   templateUrl: './blog-display.component.html',
   styleUrl: './blog-display.component.scss',
@@ -56,9 +56,13 @@ export class BlogDisplayComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private userService: UserService,
     private breakpointServer: BreakpointObserver,
-    private aiservice: AiService
+    private aiservice: AiService,
+    private scrollStrategyOpts:ScrollStrategyOptions,
   ) { }
   readonly snackbar = inject(MatSnackBar);
+  readonly bottomSheet = inject(MatBottomSheet);
+  bottomSheetCfg:MatBottomSheetConfig = new MatBottomSheetConfig();
+
   loading: boolean = true;
   openSidebar: boolean = false;
   titleArray: Array<Title> = [];
@@ -76,6 +80,7 @@ export class BlogDisplayComponent implements OnInit, OnDestroy {
   markdownReady(event: { ready: boolean, titles: Array<Title> }) {
     if (event.ready) {
       this.titleArray = event.titles;
+      this.bottomSheetCfg.data = event.titles;
       setTimeout(() => {
         this.loading = false;
       }, 300)
@@ -89,13 +94,19 @@ export class BlogDisplayComponent implements OnInit, OnDestroy {
     this.openSidebar = false;
   }
   onBookMarkClicked() {
-    this.openSidebar = true;
+    // this.openSidebar = true;
+    this.bottomSheet.open(
+      BlogBookmarkComponent,
+      this.bottomSheetCfg
+    );
   }
   onBookMarkItemClicked(titleID: string) {
     const element = document.getElementById(titleID);
+    // console.log(element);
     element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'start' });
-    this.openSidebar = false;
+    // this.openSidebar = false;
   }
+
   snackBarTips(content: string) {
     this.snackbar.openFromComponent(SnackBarComponent, {
       data: {
@@ -190,6 +201,8 @@ export class BlogDisplayComponent implements OnInit, OnDestroy {
         this.blogInfoFlexDirection = "row";
       }
     });
+
+    this.bottomSheetCfg.scrollStrategy = this.scrollStrategyOpts.noop();
   }
 
   ngOnDestroy(): void {
