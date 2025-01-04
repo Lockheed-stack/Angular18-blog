@@ -45,7 +45,7 @@
 
               "node_modules/ng-zorro-antd/upload/style/index.min.css",
 
-              "node_modules/highlight.js/styles/base16/material.min.css"
+              "node_modules/highlight.js/styles/a11y-dark.min.css"
             ],
             "scripts": [
               "node_modules/emoji-toolkit/lib/js/joypixels.min.js",
